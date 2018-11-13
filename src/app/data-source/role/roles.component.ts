@@ -42,7 +42,7 @@ export class Magician {
     defenses: number = 0; // 防御力
 
     skillAttr: SkillAttr[] = [
-        { memo: '攻击时，有20%的几率使敌人进入流血状态', Bleeding: new Bleeding(0.05, 2) },
+        { memo: '攻击时，有20%的几率使敌人进入流血状态', Bleeding: new Bleeding(0.2, 0.05, 2) },
         { memo: '攻击时，能将造成伤害的10%转为自己的护盾', ShieldFromAttack: new ShieldFromAttack(1, 0.1) },
     ];
 }

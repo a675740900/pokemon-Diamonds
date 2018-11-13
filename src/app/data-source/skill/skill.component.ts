@@ -8,6 +8,9 @@ export class SkillAttr {
     ViolentAttack?: ViolentAttack;
     ReduceInjury?: ReduceInjury;
     ShieldFromAttack?: ShieldFromAttack;
+    stiff?: stiff;
+    ReducePower?: ReducePower;
+    Dodge?: Dodge ;
 }
 
 /**
@@ -31,13 +34,14 @@ export enum InjuryStatus {
  * 流血效果
  */
 export class Bleeding {
+    probability: number; // 流血几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%的伤害吸血
     numPerSecond: number; // 每秒伤害百分比 0.05表示目标最大生命值5%的伤害
     duration: number; // 持续时间
     attackTime: AttackTime = AttackTime.afterAttack;
 
-    constructor(numPerSecond: number, duration: number) {
-        [this.numPerSecond, this.duration] = [numPerSecond, duration];
+    constructor(probability: number, numPerSecond: number, duration: number) {
+        [this.probability, this.numPerSecond, this.duration] = [probability, numPerSecond, duration];
     }
 }
 
@@ -45,11 +49,12 @@ export class Bleeding {
  * 吸血效果
  */
 export class BloodSucking {
+    probability: number; // 吸血几率 0.5表示50%
     efficiency: number; // 吸血效率 0.5表示50%的伤害吸血
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
 
-    constructor(efficiency: number) {
-        [this.efficiency] = [efficiency];
+    constructor(probability: number, efficiency: number) {
+        [this.probability, this.efficiency] = [probability, efficiency];
     }
 }
 
@@ -101,6 +106,43 @@ export class ShieldFromAttack {
     probability: number;
     efficiency: number; // 生成护盾效率 0.5表示50%的伤害吸血
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
+
+    constructor(probability: number, efficiency: number) {
+        [this.probability, this.efficiency] = [probability, efficiency];
+    }
+}
+
+/**
+ * 使敌人僵硬
+ */
+export class stiff {
+    probability: number; // 僵硬几率
+    roundNum: number; // 僵硬回合数
+
+    constructor(probability: number, roundNum: number) {
+        [this.probability, this.roundNum] = [probability, roundNum];
+    }
+}
+
+/**
+ * 使敌人减少力量
+ */
+export class ReducePower {
+    probability: number; // 触发几率 0.5表示50%的
+    efficiency: number; // 效率 0.5表示50%
+    duration: number; // 持续时间
+
+    constructor(probability: number, efficiency: number, duration: number) {
+        [this.probability, this.efficiency, duration] = [probability, efficiency, duration];
+    }
+}
+
+/**
+ * 闪避伤害
+ */
+export class Dodge {
+    probability: number; // 触发几率 0.5表示50%的
+    efficiency: number; // 效率 0.5表示50%
 
     constructor(probability: number, efficiency: number) {
         [this.probability, this.efficiency] = [probability, efficiency];
