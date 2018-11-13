@@ -17,6 +17,7 @@ export class base_role_attr {
 export class Warrior {
     roleguid: number = 1; // 角色编号
     HP: number = 100;
+    MP: number = 100;
     power: number = 6; // 力量
     magic: number = 2; // 智慧
     defenses: number = 3; // 防御力
@@ -35,6 +36,7 @@ export class Warrior {
 export class Magician {
     roleguid: number = 2; // 角色编号
     HP: number = 100;
+    MP: number = 150;
     power: number = 2; // 力量
     magic: number = 6; // 智慧
     defenses: number = 0; // 防御力
