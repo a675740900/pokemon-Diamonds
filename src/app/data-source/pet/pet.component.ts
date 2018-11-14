@@ -73,7 +73,7 @@ export class Penguin {
 
     skillAttr: SkillAttr[] = [
         { memo: '攻击时，有30%的几率使敌人水肿，其攻击力下降20%，持续一回合', ReducePower: new ReducePower(0.3, 0.2, 1) },
-        { memo: '受到伤害时，有10%的几率钻入水中躲避50%伤害',  Dodge: new Dodge(0.1, 0.5) },
+        { memo: '受到伤害时，有10%的几率钻入水中躲避50%的伤害',  Dodge: new Dodge(0.1, 0.5) },
     ];
 } 
 
@@ -86,6 +86,7 @@ export class Sparrow {
     level: number = 1; // 阶级1
     defenses: number = 1;
     pettype: PetType = PetType.FLIGHT;
+    // buff: buff[];
 
     skillAttr: SkillAttr[] = [
         { memo: '飞的快，受到伤害时，有10%的几率躲避伤害',Dodge: new Dodge(0.1, 1) }
