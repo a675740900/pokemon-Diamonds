@@ -12,13 +12,15 @@ import { DemoMaterialModule } from './material-module';
 import { MatTableModule } from '@angular/material/table';
 import { FormsModule } from '@angular/forms';
 import { ChooseInitPetComponent } from './home/choose-init-pet/choose-init-pet.component';
+import { HomeComponent } from './home/home/home.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         // FightComponent,
         SettingComponent,
-        ChooseInitPetComponent
+        ChooseInitPetComponent,
+        HomeComponent
     ],
     imports: [
         BrowserModule,
