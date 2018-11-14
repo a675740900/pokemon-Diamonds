@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { DialogData } from '../../app.component';
 
 @Component({
     selector: 'app-setting',
@@ -13,7 +12,7 @@ export class SettingComponent implements OnInit {
 
     constructor(
         public dialogRef: MatDialogRef<SettingComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: DialogData) { }
+        @Inject(MAT_DIALOG_DATA) public data: any) { }
 
     onNoClick(): void {
         this.dialogRef.close();

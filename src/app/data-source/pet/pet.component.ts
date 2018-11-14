@@ -1,10 +1,22 @@
 import { SkillAttr, ViolentAttack, ReduceInjury, BloodSucking, stiff, Bleeding, ReducePower, Dodge } from "../skill/skill.component";
+import { matchITFS, getPetMatchList } from "./pet-info";
 
 export const petList_plant: number[] = [1];
 export const petList_beast: number[] = [2];
 export const petList_metal: number[] = [3];
 export const petList_water: number[] = [4];
 export const petList_flight: number[] = [5];
+
+export const getPet = (petguid: number) => {
+    const petMatchList: matchITFS[] = getPetMatchList();
+    let pet: any;
+    for (const petInfo of petMatchList) {
+        if (petInfo.petguid == petguid) {
+            pet = eval(`new ${petInfo.className}`);
+        }
+    }
+    return pet;
+}
 
 export enum PetType {
     PLANT, // 植物系--克制飞行
@@ -14,7 +26,28 @@ export enum PetType {
     FLIGHT, // 飞行系--克制海洋系
 }
 
-export class Argy {
+export class Buff {
+    bleeding?: number;
+    stiff?: boolean;
+    powerlower?: number;
+    roundNum?: number;
+}
+
+export class pet {
+    petguid: number; // 宠物编号
+    name: string; // 宠物名称
+    HP: number; // 血量
+    MP: number; // 蓝量
+    power: number; // 力量（攻击力）
+    level: number; // 阶级
+    defenses: number; // 防御力
+    pettype: PetType; // 属性
+    passiveSkills: SkillAttr[]; // 被动技能
+    activeSkill: SkillAttr[]; // 主动技能
+    buff: Buff[];
+}
+
+export class Argy extends pet {
     petguid: number = 1;
     name: string = '艾草';
     HP: number = 50;
@@ -24,7 +57,7 @@ export class Argy {
     defenses: number = 0;
     pettype: PetType = PetType.PLANT;
 
-    skillAttr: SkillAttr[] = [
+    passiveSkills: SkillAttr[] = [
         { memo: '攻击时10%吸血效果', BloodSucking: new BloodSucking(1, 0.1) },
         { memo: '攻击时5%的几率缠绕敌人，使其无法行动一回合', stiff: new stiff(0.5, 1) }
     ];
@@ -40,7 +73,7 @@ export class Mantis {
     defenses: number = 3;
     pettype: PetType = PetType.BEAST;
 
-    skillAttr: SkillAttr[] = [
+    passiveSkills: SkillAttr[] = [
         { memo: '攻击时，有10%的几率使敌人进入流血状态，持续3个回合', Bleeding: new Bleeding(0.1, 0.04, 3) }
     ];
 }
@@ -55,7 +88,7 @@ export class CupricSnake  {
     defenses: number = 3;
     pettype: PetType = PetType.METAL;
 
-    skillAttr: SkillAttr[] = [
+    passiveSkills: SkillAttr[] = [
         { memo: '身体坚硬，有15%的伤害减免', ReduceInjury: new ReduceInjury(1, 0.15) },
         { memo: '攻击时5%的几率使敌人石化，无法行动一回合',  stiff: new stiff(0.5, 1) },
     ];
@@ -71,7 +104,7 @@ export class Penguin {
     defenses: number = 1;
     pettype: PetType = PetType.WATER;
 
-    skillAttr: SkillAttr[] = [
+    passiveSkills: SkillAttr[] = [
         { memo: '攻击时，有30%的几率使敌人水肿，其攻击力下降20%，持续一回合', ReducePower: new ReducePower(0.3, 0.2, 1) },
         { memo: '受到伤害时，有10%的几率钻入水中躲避50%的伤害',  Dodge: new Dodge(0.1, 0.5) },
     ];
@@ -88,7 +121,7 @@ export class Sparrow {
     pettype: PetType = PetType.FLIGHT;
     // buff: buff[];
 
-    skillAttr: SkillAttr[] = [
+    passiveSkills: SkillAttr[] = [
         { memo: '飞的快，受到伤害时，有10%的几率躲避伤害',Dodge: new Dodge(0.1, 1) }
     ];
 } 

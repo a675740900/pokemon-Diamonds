@@ -37,11 +37,13 @@ export class Bleeding {
     probability: number; // 流血几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%的伤害吸血
     numPerSecond: number; // 每秒伤害百分比 0.05表示目标最大生命值5%的伤害
-    duration: number; // 持续时间
+    seriousInjury: number; // 重伤效果，0.5表示回血效果减半
+    roundNum: number; // 持续时间
     attackTime: AttackTime = AttackTime.afterAttack;
+    tip: string = '流血效果，HP'
 
-    constructor(probability: number, numPerSecond: number, duration: number) {
-        [this.probability, this.numPerSecond, this.duration] = [probability, numPerSecond, duration];
+    constructor(probability: number, numPerSecond: number, roundNum: number, seriousInjury: number = 0.5) {
+        [this.probability, this.numPerSecond, this.roundNum, this.seriousInjury] = [probability, numPerSecond, roundNum, seriousInjury];
     }
 }
 
@@ -130,10 +132,10 @@ export class stiff {
 export class ReducePower {
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
-    duration: number; // 持续时间
+    roundNum: number; // 持续时间
 
-    constructor(probability: number, efficiency: number, duration: number) {
-        [this.probability, this.efficiency, duration] = [probability, efficiency, duration];
+    constructor(probability: number, efficiency: number, roundNum: number) {
+        [this.probability, this.efficiency, roundNum] = [probability, efficiency, roundNum];
     }
 }
 

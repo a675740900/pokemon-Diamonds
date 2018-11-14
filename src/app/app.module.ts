@@ -17,7 +17,7 @@ import { HomeComponent } from './home/home/home.component';
 @NgModule({
     declarations: [
         AppComponent,
-        // FightComponent,
+        FightComponent,
         SettingComponent,
         ChooseInitPetComponent,
         HomeComponent
@@ -25,7 +25,6 @@ import { HomeComponent } from './home/home/home.component';
     imports: [
         BrowserModule,
         AppRoutingModule,
-        // SettingComponent,
         BrowserAnimationsModule,
         DemoMaterialModule,
         MatInputModule,
@@ -35,7 +34,8 @@ import { HomeComponent } from './home/home/home.component';
     providers: [],
     bootstrap: [AppComponent],
     entryComponents: [
-        SettingComponent
+        SettingComponent,
+        FightComponent
     ]
 })
 export class AppModule { }

@@ -23,7 +23,7 @@ export class Warrior {
     defenses: number = 3; // 防御力
     // new base_role_attr(1, 6, 2, 4);
 
-    skillAttr: SkillAttr[] = [
+    SkillAttr: SkillAttr[] = [
         { memo: '攻击时，有20%的几率造成双倍伤害', ViolentAttack: new ViolentAttack(0.2, 2) },
         { memo: '减少受到的10%的伤害', ReduceInjury: new ReduceInjury(1, 0.1) },
     ];
@@ -41,7 +41,7 @@ export class Magician {
     magic: number = 6; // 智慧
     defenses: number = 0; // 防御力
 
-    skillAttr: SkillAttr[] = [
+    SkillAttr: SkillAttr[] = [
         { memo: '攻击时，有20%的几率使敌人进入流血状态', Bleeding: new Bleeding(0.2, 0.05, 2) },
         { memo: '攻击时，能将造成伤害的10%转为自己的护盾', ShieldFromAttack: new ShieldFromAttack(1, 0.1) },
     ];
