@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FightComponent } from './home/fight/fight.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [
@@ -13,7 +14,8 @@ import { FightComponent } from './home/fight/fight.component';
     imports: [
         BrowserModule,
         AppRoutingModule,
-        FightComponent
+        FightComponent,
+        BrowserAnimationsModule
     ],
     providers: [],
     bootstrap: [AppComponent]
