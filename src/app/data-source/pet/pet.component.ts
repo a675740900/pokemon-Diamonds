@@ -1,5 +1,6 @@
-import { SkillAttr, ViolentAttack, ReduceInjury, BloodSucking, stiff, Bleeding, ReducePower, Dodge } from "../skill/skill.component";
+import { SkillAttr, ViolentAttack, ReduceInjury, BloodSucking, Stiff, Bleeding, ReducePower, Dodge, IncreasePower } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
+import { copy } from "src/app/common-tool";
 
 export const petList_plant: number[] = [1];
 export const petList_beast: number[] = [2];
@@ -27,30 +28,37 @@ export enum PetType {
 }
 
 export class Buff {
-    bleeding?: number;
-    stiff?: boolean;
-    powerlower?: number;
-    roundNum?: number;
+    bleeding?: number; // 流血
+    seriousInjury?: boolean; // 是否重伤
+    Stiff?: boolean; // 是否僵硬
+    reducePower?: number; // 减少攻击力
+    increasePower?: number; // 增加攻击力
+    shield?: number; // 护盾
+    roundNum?: number; // 回合数
+    currentRound?: number; // 当前回合数
 }
 
 export class pet {
     petguid: number; // 宠物编号
     name: string; // 宠物名称
     HP: number; // 血量
+    current_HP: number; // 当前血量
     MP: number; // 蓝量
     power: number; // 力量（攻击力）
     level: number; // 阶级
     defenses: number; // 防御力
     pettype: PetType; // 属性
-    passiveSkills: SkillAttr[]; // 被动技能
-    activeSkill: SkillAttr[]; // 主动技能
-    buff: Buff[];
+    passiveSkills: SkillAttr[] = []; // 被动技能
+    activeSkill: SkillAttr[] = []; // 主动技能
+    buff: Buff[] = [];
+    debuff: Buff[] = [];
 }
 
 export class Argy extends pet {
     petguid: number = 1;
     name: string = '艾草';
     HP: number = 50;
+    current_HP: number = copy(this.HP);
     MP: number = 50;
     power: number = 9;
     level: number = 1; // 阶级1
@@ -59,14 +67,15 @@ export class Argy extends pet {
 
     passiveSkills: SkillAttr[] = [
         { memo: '攻击时10%吸血效果', BloodSucking: new BloodSucking(1, 0.1) },
-        { memo: '攻击时5%的几率缠绕敌人，使其无法行动一回合', stiff: new stiff(0.5, 1) }
+        { memo: '攻击时5%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.5, 1) }
     ];
 }
 
-export class Mantis {
+export class Mantis extends pet {
     petguid: number = 2;
     name: string = '螳螂';
     HP: number = 60;
+    current_HP: number = copy(this.HP);
     MP: number = 50;
     power: number = 10;
     level: number = 1; // 阶级1
@@ -78,10 +87,11 @@ export class Mantis {
     ];
 }
 
-export class CupricSnake  {
+export class CupricSnake extends pet  {
     petguid: number = 3;
     name: string = '赤铜蛇';
     HP: number = 80;
+    current_HP: number = copy(this.HP);
     MP: number = 35;
     power: number = 6;
     level: number = 1; // 阶级1
@@ -90,14 +100,15 @@ export class CupricSnake  {
 
     passiveSkills: SkillAttr[] = [
         { memo: '身体坚硬，有15%的伤害减免', ReduceInjury: new ReduceInjury(1, 0.15) },
-        { memo: '攻击时5%的几率使敌人石化，无法行动一回合',  stiff: new stiff(0.5, 1) },
+        { memo: '攻击时5%的几率使敌人石化，无法行动一回合',  Stiff: new Stiff(0.5, 1) },
     ];
 }
 
-export class Penguin {
+export class Penguin extends pet {
     petguid: number = 4;
     name: string = '企鹅';
     HP: number = 70;
+    current_HP: number = copy(this.HP);
     MP: number = 60;
     power: number = 7;
     level: number = 1; // 阶级1
@@ -110,18 +121,19 @@ export class Penguin {
     ];
 } 
 
-export class Sparrow {
+export class Sparrow extends pet {
     petguid: number = 5;
     name: string = '老鹰';
     HP: number = 70;
+    current_HP: number = copy(this.HP);
     MP: number = 60;
     power: number = 7;
     level: number = 1; // 阶级1
     defenses: number = 1;
     pettype: PetType = PetType.FLIGHT;
-    // buff: buff[];
 
     passiveSkills: SkillAttr[] = [
-        { memo: '飞的快，受到伤害时，有10%的几率躲避伤害',Dodge: new Dodge(0.1, 1) }
+        { memo: '飞的快，受到伤害时，有10%的几率躲避伤害',Dodge: new Dodge(0.1, 1) },
+        { memo: '居高临下，增加10%的攻击力', IncreasePower: new IncreasePower(1, 0.1) },
     ];
 } 

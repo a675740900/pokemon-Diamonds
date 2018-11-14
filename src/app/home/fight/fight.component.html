@@ -1,5 +1,17 @@
 <mat-grid-list cols="2" rowHeight="3:1">
-    <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.cols" [rowspan]="tile.rows" [style.background]="tile.color">
-        {{tile.text}}
+    <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: lightblue'>
+
     </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
+        {{pet_Enemy.name}}
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
+        {{pet_my.name}}
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
+            <button mat-raised-button color="warn" (click)='attackt()'>攻击</button>
+    </mat-grid-tile>
+    <!-- <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.cols" [rowspan]="tile.rows" [style.background]="tile.color">
+        {{tile.text}}
+    </mat-grid-tile> -->
 </mat-grid-list>
