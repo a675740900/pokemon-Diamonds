@@ -1,0 +1,11 @@
+.progressBar {
+    /* height: 20px; */
+    width: 150px;
+    margin-right: 45%;
+    margin-bottom: 20%;
+    align-content: center;
+}
+
+.blood-font {
+    font-size: smaller;
+}

@@ -3,6 +3,8 @@
  */
 export class SkillAttr {
     memo: string; // 技能说明
+    level?: number; // 技能所需阶级
+    grade?: number; // 技能所需等级
     Bleeding?: Bleeding; // 流血
     BloodSucking?: BloodSucking; // 吸血
     ViolentAttack?: ViolentAttack; // 暴击
@@ -11,13 +13,9 @@ export class SkillAttr {
     Stiff?: Stiff; // 僵硬
     ReducePower?: ReducePower; // 减少攻击力
     Dodge?: Dodge; // 闪避
-    IncreasePower?: IncreasePower // 增加攻击力
+    IncreasePower?: IncreasePower; // 增加攻击力
+    IncreaseBlood?: IncreaseBlood; // 增加已损失生命值百分比的血量
 }
-
-export const beAttackedSkill: string[] = ['ReduceInjury'];
-export const beforeAttackSkill: string[] = ['IncreasePower', 'ViolentAttack'];
-export const attackSkill: string[] = ['Dodge'];
-export const afterAttackSkill: string[] = ['Bleeding', 'BloodSucking', 'ShieldFromAttack'];
 
 /**
  * 攻击时间段
@@ -67,7 +65,7 @@ export class Bleeding {
     triggerRound: Target = Target.enemy; // 触发回合
     tip: string = '流血效果，HP'
 
-    constructor(probability: number, efficiency: number, roundNum: number, seriousInjury: number = 0.5) {
+    constructor(probability: number, efficiency: number, roundNum: number, seriousInjury: number) {
         [this.probability, this.efficiency, this.roundNum, this.seriousInjury] = [probability, efficiency, roundNum, seriousInjury];
     }
 }
@@ -207,5 +205,17 @@ export class IncreasePower {
 
     constructor(probability: number, efficiency: number, roundNum: number) {
         [this.probability, this.efficiency, this.roundNum] = [probability, efficiency, roundNum];
+    }
+}
+
+export class IncreaseBlood {
+    name: string = 'IncreaseBlood';
+    probability: number; // 触发几率 0.5表示50%的
+    bloodCondition: number; // 0.3表示生命值低于30%
+    efficiency: number; // 效率 0.5表示50%
+    triggerRound: Target = Target.enemy; // 触发回合
+
+    constructor(probability: number, efficiency: number, bloodCondition: number) {
+        [this.probability, this.efficiency, this.bloodCondition] = [probability, efficiency, bloodCondition];
     }
 }

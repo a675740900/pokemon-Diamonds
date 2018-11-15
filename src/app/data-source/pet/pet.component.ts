@@ -1,4 +1,4 @@
-import { SkillAttr, ReduceInjury, BloodSucking, Stiff, Bleeding, ReducePower, Dodge, IncreasePower } from "../skill/skill.component";
+import { SkillAttr, ReduceInjury, BloodSucking, Stiff, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
 import { copy } from "src/app/common-tool";
 
@@ -33,7 +33,6 @@ export class Buff {
     stiff?: boolean; // 是否僵硬
     reducePower?: number; // 减少攻击力
     increasePower?: number; // 增加攻击力
-    shield?: number; // 护盾
     roundNum: number; // 回合数
     currentRound: number; // 当前回合数
 }
@@ -44,6 +43,7 @@ export class pet {
     HP: number; // 血量
     current_HP: number; // 当前血量
     MP: number; // 蓝量
+    shield: number = 0; // 护盾
     power: number; // 力量（攻击力）
     level: number; // 阶级
     defenses: number; // 防御力
@@ -67,8 +67,11 @@ export class Argy extends pet {
     pettype: PetType = PetType.PLANT;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时15%吸血效果', BloodSucking: new BloodSucking(1, 0.15) },
-        { memo: '攻击时10%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.1, 1) }
+        { memo: '攻击时15%吸血效果', BloodSucking: new BloodSucking(1, 0.15), level: 1},
+        { memo: '攻击时，10%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.1, 1), level: 1 },
+        { memo: '攻击时，将造成的伤害的15%转换为护盾', ShieldFromAttack: new ShieldFromAttack(1, 0.15), level: 1},
+        { memo: '终极奥义：过端午！生命值低于30%，被攻击时有40%的几率会回复已损失生命值20%的生命值', IncreaseBlood: new IncreaseBlood(0.4, 0.20, 0.3), level: 1},
+        // { memo: '攻击时，10%的几率是敌人中毒，持续3回合', Bleeding: new Bleeding(0.1, 0.04, 3, 0), level: 2},
     ];
 }
 
@@ -84,7 +87,8 @@ export class Mantis extends pet {
     pettype: PetType = PetType.BEAST;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时，有15%的几率使敌人进入流血状态，持续3个回合', Bleeding: new Bleeding(0.15, 0.04, 3) }
+        { memo: '攻击时，有15%的几率使敌人进入流血状态，持续3个回合', Bleeding: new Bleeding(0.15, 0.04, 3, 0.5), level: 1 },
+        { memo: '攻击时，有10%的几率暴击，暴击伤害150%', ViolentAttack: new ViolentAttack(0.1, 1.5), level: 2 },
     ];
 }
 

@@ -93,7 +93,7 @@ export class FightComponent implements OnInit {
         let power: number = this.getPower(pet_atta); // 攻击力
         hurt = parseInt(copy(power));
 
-        this.doSkill(pet_beAtta.passiveSkills, 'Dodge', (skill: SkillAttr) => { // 闪避计算
+        this.doSkill(pet_beAtta, 'Dodge', (skill: SkillAttr) => { // 闪避计算
             const oldHurt: number = copy(hurt);
             hurt = rmFloatPoint(hurt * (1 - skill.Dodge.efficiency));
             console.log(`${pet_beAtta.name} 闪避伤害 ${oldHurt - hurt}`)
@@ -107,7 +107,7 @@ export class FightComponent implements OnInit {
             }
 
             // 吸血
-            this.doSkill(pet_atta.passiveSkills, 'BloodSucking', (skill: SkillAttr) => {
+            this.doSkill(pet_atta, 'BloodSucking', (skill: SkillAttr) => {
                 let bloodSuckingNum: number = rmFloatPoint(causeHurt * skill.BloodSucking.efficiency);
                 const seriousInjuryBuffIndex: number = pet_atta.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.seriousInjury));
                 let str: string = '';
@@ -121,7 +121,7 @@ export class FightComponent implements OnInit {
             });
 
             // 僵硬
-            this.doSkill(pet_atta.passiveSkills, 'Stiff', (skill: SkillAttr) => {
+            this.doSkill(pet_atta, 'Stiff', (skill: SkillAttr) => {
                 console.log(`${pet_beAtta.name} 进入僵硬状态`);
                 pet_beAtta.debuff.push({
                     stiff: true,
@@ -131,7 +131,7 @@ export class FightComponent implements OnInit {
             })
 
             // 流血
-            this.doSkill(pet_atta.passiveSkills, 'Bleeding', (skill: SkillAttr) => { // 流血计算
+            this.doSkill(pet_atta, 'Bleeding', (skill: SkillAttr) => { // 流血计算
                 console.log(`${pet_beAtta.name} 进入流血状态`)
                 const bleedingNum = rmFloatPoint(pet_beAtta.HP * skill.Bleeding.efficiency)
                 pet_beAtta.debuff.push({
@@ -147,13 +147,35 @@ export class FightComponent implements OnInit {
             })
 
             // 减少攻击力
-            this.doSkill(pet_atta.passiveSkills, 'ReducePower', (skill: SkillAttr) => {
+            this.doSkill(pet_atta, 'ReducePower', (skill: SkillAttr) => {
                 console.log(`${pet_beAtta.name} 减少攻击力`);
                 pet_beAtta.debuff.push({
                     reducePower: skill.ReducePower.efficiency,
                     roundNum: skill.ReducePower.roundNum,
                     currentRound: 0
                 })
+            })
+
+            // 生成护盾
+            this.doSkill(pet_atta, 'ShieldFromAttack', (skill: SkillAttr) => {
+                const shield: number = rmFloatPoint(causeHurt * skill.ShieldFromAttack.efficiency);
+                pet_atta.shield = rmFloatPoint(pet_atta.shield + shield);
+            })
+
+            // 回复已损失生命值百分比血量
+            this.doSkill(pet_atta, 'IncreaseBlood', (skill: SkillAttr) => {
+                const bloodPercentage: number = rmFloatPoint(pet_atta.current_HP / pet_atta.HP);
+                if (bloodPercentage <= skill.IncreaseBlood.bloodCondition) {
+                    const lostBlood: number = rmFloatPoint(pet_atta.HP - pet_atta.current_HP);
+                    let cure: number = rmFloatPoint(lostBlood * skill.IncreaseBlood.efficiency);
+                    let obj: any = this.getBloodFromSeriousInjury(pet_atta, cure);
+                    let seriousInjuryStr: string = '';
+                    if (obj.isSeriousInjury) {
+                        seriousInjuryStr = `（重伤效果）`;
+                    }
+                    this.bloodRecovery(pet_atta, cure);
+                    console.log(`艾草发动终极奥义！回复 ${cure} 点HP ${seriousInjuryStr}`)
+                }
             })
         }
 
@@ -167,6 +189,18 @@ export class FightComponent implements OnInit {
         console.log('------------回合结束------------')
         
         this.setRound();
+    }
+
+    getBloodFromSeriousInjury(pet: pet, cure: number): any {
+        let obj: any = {};
+        const debuff: Buff = pet.debuff.find((debuff: Buff) => !isEmpty(debuff.seriousInjury) && debuff.seriousInjury > 0);
+        if (!isEmpty(debuff)) {
+            cure = cure * (1 - debuff.seriousInjury);
+            obj.isSeriousInjury = true;
+            console.log(`重伤效果，回复 ${cure} 点HP`);
+        }
+        obj.cure = cure;
+        return obj;
     }
 
     bloodRecovery(pet: pet, blood: number) {
@@ -189,26 +223,26 @@ export class FightComponent implements OnInit {
     toAttack(pet: pet, hurtNum: number): number {
         let hurt: number = copy(hurtNum);
 
-        this.doSkill(pet.passiveSkills, 'ReduceInjury', (skill: SkillAttr) => {
+        this.doSkill(pet, 'ReduceInjury', (skill: SkillAttr) => {
             hurt = rmFloatPoint(hurt * (1 - skill.ReduceInjury.efficiency));
         })
 
-        for (const buff of pet.buff) {
-            if (!isEmpty(buff.shield) && buff.shield > 0) {
-                const oldShield: number = copy(buff.shield);
-                buff.shield = rmFloatPoint(buff.shield - hurtNum);
-                if (buff.shield < 0) {
-                    console.log(`${pet.name} 护盾抵挡 ${oldShield}`);
-                    hurt = rmFloatPoint(0 - buff.shield);
-                    buff.shield = 0;
-                } else {
-                    console.log(`${pet.name} 护盾抵挡 ${oldShield - buff.shield}`)
-                    hurt = 0;
-                }
+        if (!isEmpty(pet.shield) && pet.shield > 0) {
+            const oldShield: number = copy(pet.shield);
+            const nowShield = rmFloatPoint(pet.shield - hurtNum);
+            if (nowShield < 0) {
+                console.log(`${pet.name} 护盾抵挡 ${oldShield}`);
+                hurt = rmFloatPoint(0 - nowShield);
+                pet.shield = 0;
+            } else {
+                pet.shield = nowShield;
+                console.log(`${pet.name} 护盾抵挡 ${oldShield - pet.shield}`)
+                hurt = 0;
             }
         }
+
         this.bloodLose(pet, hurt);
-        console.log(`${pet.name} 受到 ${hurt} 点生命值伤害`);
+        console.log(`${pet.name} 受到 ${hurt} 点HP伤害`);
         return hurt;
     }
 
@@ -231,7 +265,7 @@ export class FightComponent implements OnInit {
         if (this.pet_Enemy.isRound) {
             setTimeout(() => {
                 this.attack(this.pet_Enemy, this.pet_my);
-            }, 0);
+            }, 1000);
         }
         this.current_roundNum++;
     }
@@ -253,7 +287,7 @@ export class FightComponent implements OnInit {
             } else {
                 if (!isEmpty(debuff.bleeding)) {
                     this.bloodLose(pet, debuff.bleeding);
-                    console.log(`流血效果，失去 ${debuff.bleeding} 点生命值`);
+                    console.log(`流血效果，失去 ${debuff.bleeding} 点HP`);
                     debuff.currentRound++;
                 }
             }
@@ -278,7 +312,7 @@ export class FightComponent implements OnInit {
     // 获取当前攻击的攻击力
     getPower(pet: pet): number {
         let power: number = copy(pet.power);
-        this.doSkill(pet.passiveSkills, 'IncreasePower', (skill: SkillAttr) => {
+        this.doSkill(pet, 'IncreasePower', (skill: SkillAttr) => {
             pet.buff.push({
                 increasePower: skill.IncreasePower.efficiency,
                 roundNum: skill.IncreasePower.roundNum,
@@ -298,17 +332,17 @@ export class FightComponent implements OnInit {
                 debuff.currentRound++;
             }
         }
-        this.doSkill(pet.passiveSkills, 'ViolentAttack', (skill: SkillAttr) => { // 暴击
+        this.doSkill(pet, 'ViolentAttack', (skill: SkillAttr) => { // 暴击
             power = rmFloatPoint(power * skill.ViolentAttack.hurtNum); // 攻击力✖️暴击伤害
         });
         return power;
     }
 
-    doSkill(skills: SkillAttr[], skillName: string, func: Function) {
-        const skillIndex: number = skills.findIndex((skill: SkillAttr) => !isEmpty(skill[skillName]));
-        if (skillIndex > -1) {
-            const isHap: boolean = isHappen(skills[skillIndex][skillName].probability);
-            if (isHap) func(skills[skillIndex]);
+    doSkill(pet: pet, skillName: string, func: Function) {
+        const skill: SkillAttr = pet.passiveSkills.find((skill: SkillAttr) => !isEmpty(skill[skillName]));
+        if (!isEmpty(skill) && pet.level >= skill.level) {
+            const isHap: boolean = isHappen(skill[skillName].probability);
+            if (isHap) func(skill);
         }
     }
 }
