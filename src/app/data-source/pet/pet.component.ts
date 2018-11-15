@@ -48,6 +48,7 @@ export class pet {
     level: number; // 阶级
     defenses: number; // 防御力
     pettype: PetType; // 属性
+    isRound?: boolean; // 当前是否为自己回合
     passiveSkills: SkillAttr[] = []; // 被动技能
     activeSkill: SkillAttr[] = []; // 主动技能
     buff: Buff[] = [];

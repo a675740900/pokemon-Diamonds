@@ -64,6 +64,7 @@ export class Bleeding {
     attackTime: AttackTime = AttackTime.afterAttack;
     skillType: SkillType = SkillType.DEBUFF;
     target: Target = Target.enemy;
+    triggerRound: Target = Target.enemy; // 触发回合
     tip: string = '流血效果，HP'
 
     constructor(probability: number, efficiency: number, roundNum: number, seriousInjury: number = 0.5) {
@@ -81,6 +82,7 @@ export class BloodSucking {
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
     skillType: SkillType = SkillType.BUFF;
     target: Target = Target.self;
+    triggerRound: Target = Target.self; // 触发回合
 
     constructor(probability: number, efficiency: number) {
         [this.probability, this.efficiency] = [probability, efficiency];
@@ -98,6 +100,7 @@ export class RealAttack {
     InjuryStatus: InjuryStatus = InjuryStatus.beforeCount;
     skillType: SkillType = SkillType.DEBUFF;
     target: Target = Target.enemy;
+    triggerRound: Target = Target.self; // 触发回合
 
     constructor(probability: number, efficiency: number, hurtNum: number) {
         [this.probability, this.efficiency, this.hurtNum] = [probability, efficiency, hurtNum];
@@ -125,8 +128,9 @@ export class ViolentAttack {
 export class ReduceInjury {
     name: string = 'ReduceInjury';
     probability: number; // 减伤几率
-    efficiency: number; // 减伤效率 0.5表示50%的伤害吸血
+    efficiency: number; // 减伤效率 0.5表示50%
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
+    triggerRound: Target = Target.enemy; // 触发回合
 
     constructor(probability: number, efficiency: number) {
         [this.probability, this.efficiency] = [probability, efficiency];
@@ -141,6 +145,7 @@ export class ShieldFromAttack {
     probability: number;
     efficiency: number; // 生成护盾效率 0.5表示50%的伤害吸血
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
+    triggerRound: Target = Target.self; // 触发回合
 
     constructor(probability: number, efficiency: number) {
         [this.probability, this.efficiency] = [probability, efficiency];
@@ -154,6 +159,7 @@ export class Stiff {
     name: string = 'Stiff';
     probability: number; // 僵硬几率
     roundNum: number; // 僵硬回合数
+    triggerRound: Target = Target.self; // 触发回合
 
     constructor(probability: number, roundNum: number) {
         [this.probability, this.roundNum] = [probability, roundNum];
@@ -168,6 +174,7 @@ export class ReducePower {
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
     roundNum: number; // 持续时间
+    triggerRound: Target = Target.self; // 触发回合
 
     constructor(probability: number, efficiency: number, roundNum: number) {
         [this.probability, this.efficiency, roundNum] = [probability, efficiency, roundNum];
@@ -181,6 +188,7 @@ export class Dodge {
     name: string = 'Dodge';
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
+    triggerRound: Target = Target.enemy; // 触发回合
 
     constructor(probability: number, efficiency: number) {
         [this.probability, this.efficiency] = [probability, efficiency];
@@ -194,6 +202,7 @@ export class IncreasePower {
     name: string = 'IncreasePower';
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
+    triggerRound: Target = Target.self; // 触发回合
 
     constructor(probability: number, efficiency: number) {
         [this.probability, this.efficiency] = [probability, efficiency];
