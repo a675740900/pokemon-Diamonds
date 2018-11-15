@@ -7,7 +7,7 @@
         <div class='progressBar'>
             <span class='blood-font'>{{pet_Enemy.current_HP}}/{{pet_Enemy.HP}}</span>
             <mat-progress-bar color='warn' mode="buffer" [value]="(pet_Enemy.current_HP/pet_Enemy.HP)*100"
-            [bufferValue]='((pet_Enemy.shield+pet_Enemy.current_HP)/pet_Enemy.HP)*100'></mat-progress-bar>
+                [bufferValue]='((pet_Enemy.shield+pet_Enemy.current_HP)/pet_Enemy.HP)*100'></mat-progress-bar>
             {{pet_Enemy.name}}
         </div>
     </mat-grid-tile>
@@ -15,10 +15,18 @@
         <span style="margin-bottom: 20%; margin-right: 2%;">HP</span>
         <div class='progressBar'>
             <span class='blood-font'>{{pet_my.current_HP}}/{{pet_my.HP}}</span>
-            <mat-progress-bar color='warn' mode="buffer" [value]="(pet_my.current_HP/pet_my.HP)*100"
-            [bufferValue]='((pet_my.shield+pet_my.current_HP)/pet_my.HP)*100'></mat-progress-bar>
+            <mat-progress-bar color='warn' mode="buffer" [value]="(pet_my.current_HP/pet_my.HP)*100" [bufferValue]='((pet_my.shield+pet_my.current_HP)/pet_my.HP)*100'></mat-progress-bar>
             {{pet_my.name}}
         </div>
+        <!-- <span style="margin-bottom: 20%; margin-right: 2%;">MP</span>
+        <div class='progressBar2'>
+            {{pet_my.MP}}
+        </div> -->
+        <span style="margin-bottom: 20%; margin-right: 2%;">力量</span>
+        <div class='progressBar2'>
+            {{pet_my.power}}
+        </div>
+
 
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>

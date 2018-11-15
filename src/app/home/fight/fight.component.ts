@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
-import { getPet, pet, Buff } from '../../data-source/pet/pet.component';
+import { getPet, pet, Buff, getLevelProp, LevelPropITFS } from '../../data-source/pet/pet.component';
 import { isEmpty, rmFloatPoint, isHappen, copy } from 'src/app/common-tool';
 import { SkillAttr } from 'src/app/data-source/skill/skill.component';
 import { getLifeStr } from './fight-common';
@@ -32,6 +32,13 @@ export class FightComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: petsITFS) {
         this.pet_my = getPet(data.petInfo_my.petguid);
         this.pet_Enemy = getPet(data.petInfo_Enemy.petguid);
+
+        this.reSetPet(this.pet_my, data.petInfo_my);
+        this.reSetPet(this.pet_Enemy, data.petInfo_Enemy);
+
+        this.setGrade(this.pet_my);
+        this.setGrade(this.pet_Enemy);
+
         this.checkRestraint(this.pet_my, this.pet_Enemy);
         this.pet_my.isRound = true;
         this.pet_Enemy.isRound = false;
@@ -41,6 +48,22 @@ export class FightComponent implements OnInit {
         console.log('开始打架');
         console.log(this.pet_my);
         console.log(this.pet_Enemy);
+    }
+
+    reSetPet(pet: pet, petInfo: petInfo) {
+        pet.grade = petInfo.grade;
+        pet.level = petInfo.level;
+    }
+
+    setGrade(pet: pet) {
+        const levelProp: LevelPropITFS[] = getLevelProp();
+        pet.current_HP = pet.HP = this.getAttrNum(pet, 'HP', levelProp);
+        pet.MP = this.getAttrNum(pet, 'MP', levelProp);
+        pet.power = this.getAttrNum(pet, 'power', levelProp);
+    }
+
+    getAttrNum(pet: pet, lowerStr: string, levelProp: LevelPropITFS[]): number {
+        return rmFloatPoint((pet[lowerStr] + pet[`${lowerStr}Prop`] * (pet.grade - 1)) * (1 + levelProp[pet.level][`${lowerStr}Prop`]));
     }
 
     checkRestraint(pet1: pet, pet2: pet) {
@@ -70,10 +93,6 @@ export class FightComponent implements OnInit {
                 })
             }
         }
-    }
-
-    getTarget(target: number) {
-        return target === 1 ? 'pet_my' : 'pet_Enemy';
     }
 
     attack_click() {
@@ -163,18 +182,19 @@ export class FightComponent implements OnInit {
             })
 
             // 回复已损失生命值百分比血量
-            this.doSkill(pet_atta, 'IncreaseBlood', (skill: SkillAttr) => {
-                const bloodPercentage: number = rmFloatPoint(pet_atta.current_HP / pet_atta.HP);
+            this.doSkill(pet_beAtta, 'IncreaseBlood', (skill: SkillAttr) => {
+                const bloodPercentage: number = rmFloatPoint(pet_beAtta.current_HP / pet_beAtta.HP, 4);
                 if (bloodPercentage <= skill.IncreaseBlood.bloodCondition) {
-                    const lostBlood: number = rmFloatPoint(pet_atta.HP - pet_atta.current_HP);
+                    const lostBlood: number = rmFloatPoint(pet_beAtta.HP - pet_beAtta.current_HP);
                     let cure: number = rmFloatPoint(lostBlood * skill.IncreaseBlood.efficiency);
-                    let obj: any = this.getBloodFromSeriousInjury(pet_atta, cure);
+                    let obj: any = this.getBloodFromSeriousInjury(pet_beAtta, cure);
                     let seriousInjuryStr: string = '';
                     if (obj.isSeriousInjury) {
                         seriousInjuryStr = `（重伤效果）`;
+                        cure = obj.cure;
                     }
-                    this.bloodRecovery(pet_atta, cure);
-                    console.log(`艾草发动终极奥义！回复 ${cure} 点HP ${seriousInjuryStr}`)
+                    this.bloodRecovery(pet_beAtta, cure);
+                    console.log(`${pet_beAtta.name} 发动终极奥义！回复 ${cure} 点HP ${seriousInjuryStr}`)
                 }
             })
         }
@@ -195,9 +215,9 @@ export class FightComponent implements OnInit {
         let obj: any = {};
         const debuff: Buff = pet.debuff.find((debuff: Buff) => !isEmpty(debuff.seriousInjury) && debuff.seriousInjury > 0);
         if (!isEmpty(debuff)) {
-            cure = cure * (1 - debuff.seriousInjury);
+            cure = rmFloatPoint(cure * (1 - debuff.seriousInjury));
             obj.isSeriousInjury = true;
-            console.log(`重伤效果，回复 ${cure} 点HP`);
+            // console.log(`重伤效果，回复 ${cure} 点HP`);
         }
         obj.cure = cure;
         return obj;
@@ -265,7 +285,7 @@ export class FightComponent implements OnInit {
         if (this.pet_Enemy.isRound) {
             setTimeout(() => {
                 this.attack(this.pet_Enemy, this.pet_my);
-            }, 1000);
+            }, 0);
         }
         this.current_roundNum++;
     }

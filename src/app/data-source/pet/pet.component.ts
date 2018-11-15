@@ -46,13 +46,45 @@ export class pet {
     shield: number = 0; // 护盾
     power: number; // 力量（攻击力）
     level: number; // 阶级
+    HPProp: number;
+    MPProp: number;
+    powerProp: number;
+    maxLevel: number; 
+    maxGrade: number = 60; 
     defenses: number; // 防御力
     pettype: PetType; // 属性
     isRound?: boolean; // 当前是否为自己回合
     passiveSkills: SkillAttr[] = []; // 被动技能
     activeSkill: SkillAttr[] = []; // 主动技能
+    grade: number = 1; // 等级
+    exp: number = 0; // 当前经验值
     buff: Buff[] = [];
     debuff: Buff[] = [];
+}
+
+export class LevelPropITFS {
+    level: number;
+    powerProp: number; // 比例
+    HPProp: number; // 比例
+    MPProp: number; // 比例
+
+    constructor(level: number, powerProp: number, HPProp: number, MPProp: number) {
+        [this.level, this.powerProp, this.HPProp, this.MPProp] = [level, powerProp, HPProp, MPProp];
+    }
+}
+
+// 提升阶级属性提升比例
+export const LevelProp: LevelPropITFS[] = [
+    new LevelPropITFS(0, -0.15, -0.15, -0.15),
+    new LevelPropITFS(1, 0, 0, 0),
+    new LevelPropITFS(2, 0.14, 0.14, 0.14),
+    new LevelPropITFS(3, 0.13, 0.13, 0.13),
+    new LevelPropITFS(4, 0.12, 0.12, 0.12),
+    new LevelPropITFS(5, 0.1, 0.1, 0.1),
+];
+
+export const getLevelProp = (): LevelPropITFS[] => {
+    return LevelProp;
 }
 
 export class Argy extends pet {
@@ -63,14 +95,18 @@ export class Argy extends pet {
     MP: number = 50;
     power: number = 9;
     level: number = 1; // 阶级1
+    HPProp: number = 6.7;
+    MPProp: number = 2.6;
+    powerProp: number = 1;
+    maxLevel: number = 2; 
     defenses: number = 0;
     pettype: PetType = PetType.PLANT;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时15%吸血效果', BloodSucking: new BloodSucking(1, 0.15), level: 1},
+        { memo: '攻击时20%吸血效果', BloodSucking: new BloodSucking(1, 0.2), level: 1},
         { memo: '攻击时，10%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.1, 1), level: 1 },
-        { memo: '攻击时，将造成的伤害的15%转换为护盾', ShieldFromAttack: new ShieldFromAttack(1, 0.15), level: 1},
-        { memo: '终极奥义：过端午！生命值低于30%，被攻击时有40%的几率会回复已损失生命值20%的生命值', IncreaseBlood: new IncreaseBlood(0.4, 0.20, 0.3), level: 1},
+        { memo: '攻击时，将造成的伤害的15%转换为护盾', ShieldFromAttack: new ShieldFromAttack(1, 0.15), level: 2},
+        { memo: '终极奥义：过端午！生命值低于30%，被攻击时有20%的几率会回复已损失生命值20%的生命值', IncreaseBlood: new IncreaseBlood(0.4, 0.20, 0.3), level: 2},
         // { memo: '攻击时，10%的几率是敌人中毒，持续3回合', Bleeding: new Bleeding(0.1, 0.04, 3, 0), level: 2},
     ];
 }
@@ -83,6 +119,10 @@ export class Mantis extends pet {
     MP: number = 50;
     power: number = 10;
     level: number = 1; // 阶级1
+    HPProp: number = 6.8;
+    MPProp: number = 2.5;
+    powerProp: number = 1.1;
+    maxLevel: number = 2; 
     defenses: number = 3;
     pettype: PetType = PetType.BEAST;
 
@@ -100,6 +140,10 @@ export class CupricSnake extends pet {
     MP: number = 35;
     power: number = 6;
     level: number = 1; // 阶级1
+    HPProp: number = 9.8;
+    MPProp: number = 2.2;
+    powerProp: number = 1;
+    maxLevel: number = 2; 
     defenses: number = 3;
     pettype: PetType = PetType.METAL;
 
@@ -117,6 +161,10 @@ export class Penguin extends pet {
     MP: number = 60;
     power: number = 8;
     level: number = 1; // 阶级1
+    HPProp: number = 7;
+    MPProp: number = 3.2;
+    powerProp: number = 0.9;
+    maxLevel: number = 2; 
     defenses: number = 1;
     pettype: PetType = PetType.WATER;
 
@@ -134,6 +182,10 @@ export class Sparrow extends pet {
     MP: number = 60;
     power: number = 7;
     level: number = 1; // 阶级1
+    HPProp: number = 6.8;
+    MPProp: number = 2.6;
+    powerProp: number = 0.9;
+    maxLevel: number = 2; 
     defenses: number = 1;
     pettype: PetType = PetType.FLIGHT;
 
