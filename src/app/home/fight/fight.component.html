@@ -9,7 +9,7 @@
         {{pet_my.name}}
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
-            <button mat-raised-button color="warn" (click)='attack_click()'>攻击</button>
+            <button mat-raised-button color="warn" [disabled]='!pet_my.isRound' (click)='attack_click()'>攻击</button>
     </mat-grid-tile>
     <!-- <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.cols" [rowspan]="tile.rows" [style.background]="tile.color">
         {{tile.text}}

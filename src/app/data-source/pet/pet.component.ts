@@ -1,4 +1,4 @@
-import { SkillAttr, ViolentAttack, ReduceInjury, BloodSucking, Stiff, Bleeding, ReducePower, Dodge, IncreasePower } from "../skill/skill.component";
+import { SkillAttr, ReduceInjury, BloodSucking, Stiff, Bleeding, ReducePower, Dodge, IncreasePower } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
 import { copy } from "src/app/common-tool";
 
@@ -21,7 +21,7 @@ export const getPet = (petguid: number) => {
 
 export enum PetType {
     PLANT, // 植物系--克制飞行
-    BEAST , // 猛兽系--克制植物
+    BEAST, // 猛兽系--克制植物
     METAL, // 金属系--克制猛兽
     WATER, // 海洋系--克制金属
     FLIGHT, // 飞行系--克制海洋系
@@ -29,13 +29,13 @@ export enum PetType {
 
 export class Buff {
     bleeding?: number; // 流血
-    seriousInjury?: boolean; // 是否重伤
-    Stiff?: boolean; // 是否僵硬
+    seriousInjury?: number; // 是否重伤
+    stiff?: boolean; // 是否僵硬
     reducePower?: number; // 减少攻击力
     increasePower?: number; // 增加攻击力
     shield?: number; // 护盾
-    roundNum?: number; // 回合数
-    currentRound?: number; // 当前回合数
+    roundNum: number; // 回合数
+    currentRound: number; // 当前回合数
 }
 
 export class pet {
@@ -67,15 +67,15 @@ export class Argy extends pet {
     pettype: PetType = PetType.PLANT;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时10%吸血效果', BloodSucking: new BloodSucking(1, 0.1) },
-        { memo: '攻击时5%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.5, 1) }
+        { memo: '攻击时15%吸血效果', BloodSucking: new BloodSucking(1, 0.15) },
+        { memo: '攻击时10%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.1, 1) }
     ];
 }
 
 export class Mantis extends pet {
     petguid: number = 2;
     name: string = '螳螂';
-    HP: number = 60;
+    HP: number = 50;
     current_HP: number = copy(this.HP);
     MP: number = 50;
     power: number = 10;
@@ -84,14 +84,14 @@ export class Mantis extends pet {
     pettype: PetType = PetType.BEAST;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时，有10%的几率使敌人进入流血状态，持续3个回合', Bleeding: new Bleeding(0.1, 0.04, 3) }
+        { memo: '攻击时，有15%的几率使敌人进入流血状态，持续3个回合', Bleeding: new Bleeding(0.15, 0.04, 3) }
     ];
 }
 
-export class CupricSnake extends pet  {
+export class CupricSnake extends pet {
     petguid: number = 3;
     name: string = '赤铜蛇';
-    HP: number = 80;
+    HP: number = 70;
     current_HP: number = copy(this.HP);
     MP: number = 35;
     power: number = 6;
@@ -101,31 +101,31 @@ export class CupricSnake extends pet  {
 
     passiveSkills: SkillAttr[] = [
         { memo: '身体坚硬，有15%的伤害减免', ReduceInjury: new ReduceInjury(1, 0.15) },
-        { memo: '攻击时5%的几率使敌人石化，无法行动一回合',  Stiff: new Stiff(0.5, 1) },
+        { memo: '攻击时10%的几率使敌人石化，无法行动一回合', Stiff: new Stiff(0.1, 1) },
     ];
 }
 
 export class Penguin extends pet {
     petguid: number = 4;
     name: string = '企鹅';
-    HP: number = 70;
+    HP: number = 55;
     current_HP: number = copy(this.HP);
     MP: number = 60;
-    power: number = 7;
+    power: number = 8;
     level: number = 1; // 阶级1
     defenses: number = 1;
     pettype: PetType = PetType.WATER;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时，有30%的几率使敌人水肿，其攻击力下降20%，持续一回合', ReducePower: new ReducePower(0.3, 0.2, 1) },
-        { memo: '受到伤害时，有10%的几率钻入水中躲避50%的伤害',  Dodge: new Dodge(0.1, 0.5) },
+        { memo: '攻击时，有35%的几率使敌人水肿，其攻击力下降30%，持续一回合', ReducePower: new ReducePower(0.35, 0.3, 1) },
+        { memo: '受到伤害时，有15%的几率钻入水中躲避50%的伤害', Dodge: new Dodge(0.15, 0.5) },
     ];
-} 
+}
 
 export class Sparrow extends pet {
     petguid: number = 5;
     name: string = '老鹰';
-    HP: number = 70;
+    HP: number = 55;
     current_HP: number = copy(this.HP);
     MP: number = 60;
     power: number = 7;
@@ -134,7 +134,7 @@ export class Sparrow extends pet {
     pettype: PetType = PetType.FLIGHT;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '飞的快，受到伤害时，有10%的几率躲避伤害',Dodge: new Dodge(0.1, 1) },
-        { memo: '居高临下，增加10%的攻击力', IncreasePower: new IncreasePower(1, 0.1) },
+        { memo: '飞的快，受到伤害时，有20%的几率躲避伤害', Dodge: new Dodge(0.1, 1) },
+        { memo: '居高临下，增加20%的攻击力', IncreasePower: new IncreasePower(1, 0.2, 1) },
     ];
 } 

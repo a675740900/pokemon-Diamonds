@@ -177,7 +177,7 @@ export class ReducePower {
     triggerRound: Target = Target.self; // 触发回合
 
     constructor(probability: number, efficiency: number, roundNum: number) {
-        [this.probability, this.efficiency, roundNum] = [probability, efficiency, roundNum];
+        [this.probability, this.efficiency, this.roundNum] = [probability, efficiency, roundNum];
     }
 }
 
@@ -202,9 +202,10 @@ export class IncreasePower {
     name: string = 'IncreasePower';
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
+    roundNum: number; // 持续回合数
     triggerRound: Target = Target.self; // 触发回合
 
-    constructor(probability: number, efficiency: number) {
-        [this.probability, this.efficiency] = [probability, efficiency];
+    constructor(probability: number, efficiency: number, roundNum: number) {
+        [this.probability, this.efficiency, this.roundNum] = [probability, efficiency, roundNum];
     }
 }

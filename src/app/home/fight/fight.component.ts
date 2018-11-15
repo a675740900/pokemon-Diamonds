@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
-import { getPet, pet } from '../../data-source/pet/pet.component';
+import { getPet, pet, Buff } from '../../data-source/pet/pet.component';
 import { isEmpty, rmFloatPoint, isHappen, copy } from 'src/app/common-tool';
 import { SkillAttr } from 'src/app/data-source/skill/skill.component';
 import { getLifeStr } from './fight-common';
@@ -25,13 +25,14 @@ export interface petInfo {
 export class FightComponent implements OnInit {
     pet_my: pet;
     pet_Enemy: pet;
-    current_petRound: string;
+    current_roundNum: number = 1;
 
     constructor(
         public dialogRef: MatDialogRef<SettingComponent>,
         @Inject(MAT_DIALOG_DATA) public data: petsITFS) {
         this.pet_my = getPet(data.petInfo_my.petguid);
         this.pet_Enemy = getPet(data.petInfo_Enemy.petguid);
+        this.checkRestraint(this.pet_my, this.pet_Enemy);
         this.pet_my.isRound = true;
         this.pet_Enemy.isRound = false;
     }
@@ -40,6 +41,35 @@ export class FightComponent implements OnInit {
         console.log('开始打架');
         console.log(this.pet_my);
         console.log(this.pet_Enemy);
+    }
+
+    checkRestraint(pet1: pet, pet2: pet) {
+        const restraintNum: number = Math.abs(pet1.pettype - pet2.pettype);
+        if (restraintNum == 1 || restraintNum == 4) {
+            if ((pet1.pettype > pet2.pettype && pet2.pettype != 0) || (restraintNum == 4 && pet1.pettype == 0)) {
+                pet1.buff.push({
+                    increasePower: 0.2,
+                    roundNum: 99,
+                    currentRound: 0
+                })
+                pet2.debuff.push({
+                    reducePower: 0.2,
+                    roundNum: 99,
+                    currentRound: 0
+                })
+            } else {
+                pet2.buff.push({
+                    increasePower: 0.2,
+                    roundNum: 99,
+                    currentRound: 0
+                })
+                pet1.debuff.push({
+                    reducePower: 0.2,
+                    roundNum: 99,
+                    currentRound: 0
+                })
+            }
+        }
     }
 
     getTarget(target: number) {
@@ -56,6 +86,7 @@ export class FightComponent implements OnInit {
      * @param pet_beAtta 被攻击的宠物
      */
     attack(pet_atta: pet, pet_beAtta: pet) {
+        console.log(`------------第 ${this.current_roundNum} 回合------------`)
         console.log(`${pet_atta.name} 发动攻击`);
         let hurt: number = 0; // 此次攻击造成的伤害
         let cure: number = 0; // 造成的治疗量
@@ -69,40 +100,99 @@ export class FightComponent implements OnInit {
         })
 
         if (hurt > 0) {
-            this.toAttack(pet_beAtta, hurt);
+            const causeHurt = this.toAttack(pet_beAtta, hurt);
 
             if (this.isDead(pet_beAtta)) {
                 return;
             }
 
+            // 吸血
+            this.doSkill(pet_atta.passiveSkills, 'BloodSucking', (skill: SkillAttr) => {
+                let bloodSuckingNum: number = rmFloatPoint(causeHurt * skill.BloodSucking.efficiency);
+                const seriousInjuryBuffIndex: number = pet_atta.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.seriousInjury));
+                let str: string = '';
+                if (seriousInjuryBuffIndex > -1) {
+                    str = `重伤效果，治疗效率降低 ${rmFloatPoint(pet_atta.debuff[seriousInjuryBuffIndex].seriousInjury * 100)}%`;
+                    bloodSuckingNum = rmFloatPoint(bloodSuckingNum * pet_atta.debuff[seriousInjuryBuffIndex].seriousInjury)
+                    pet_atta.debuff[seriousInjuryBuffIndex].currentRound++;
+                }
+                this.bloodRecovery(pet_atta, bloodSuckingNum);
+                console.log(`${pet_atta.name} ${str }治疗 ${bloodSuckingNum}`);
+            });
+
+            // 僵硬
+            this.doSkill(pet_atta.passiveSkills, 'Stiff', (skill: SkillAttr) => {
+                console.log(`${pet_beAtta.name} 进入僵硬状态`);
+                pet_beAtta.debuff.push({
+                    stiff: true,
+                    roundNum: skill.Stiff.roundNum,
+                    currentRound: 0
+                })
+            })
+
+            // 流血
             this.doSkill(pet_atta.passiveSkills, 'Bleeding', (skill: SkillAttr) => { // 流血计算
                 console.log(`${pet_beAtta.name} 进入流血状态`)
-                const target: string = this.getTarget(skill.Bleeding.target);
-                const bleedingNum = rmFloatPoint(this[target].HP * skill.Bleeding.efficiency)
-                this[target].debuff.push({
+                const bleedingNum = rmFloatPoint(pet_beAtta.HP * skill.Bleeding.efficiency)
+                pet_beAtta.debuff.push({
                     bleeding: bleedingNum,
                     roundNum: skill.Bleeding.roundNum,
                     currentRound: 0,
                 }, {
-                        seriousInjury: true,
-                        roundNum: skill.Bleeding.roundNum,
-                        currentRound: 0,
-                    }
+                    seriousInjury: skill.Bleeding.seriousInjury,
+                    roundNum: skill.Bleeding.roundNum,
+                    currentRound: 0,
+                }
                 )
+            })
+
+            // 减少攻击力
+            this.doSkill(pet_atta.passiveSkills, 'ReducePower', (skill: SkillAttr) => {
+                console.log(`${pet_beAtta.name} 减少攻击力`);
+                pet_beAtta.debuff.push({
+                    reducePower: skill.ReducePower.efficiency,
+                    roundNum: skill.ReducePower.roundNum,
+                    currentRound: 0
+                })
             })
         }
 
         this.afterAttack(pet_beAtta);
+        this.afterAttack(pet_atta);
         if (this.isDead(pet_beAtta)) {
             return;
         }
+        console.log(getLifeStr(pet_atta));
         console.log(getLifeStr(pet_beAtta));
-        // this.setRound();
+        console.log('------------回合结束------------')
+        
+        this.setRound();
+    }
+
+    bloodRecovery(pet: pet, blood: number) {
+        const HP: number = rmFloatPoint(pet.current_HP + blood);
+        if (HP <= pet.HP) {
+            pet.current_HP = HP;
+        }
+    }
+
+    bloodLose(pet: pet, blood: number) {
+        const HP: number = rmFloatPoint(pet.current_HP - blood);
+        if (HP < 0) {
+            pet.current_HP = 0;
+        } else {
+            pet.current_HP = HP;
+        }
     }
 
     // 宠物受到攻击
-    toAttack(pet: pet, hurtNum: number) {
+    toAttack(pet: pet, hurtNum: number): number {
         let hurt: number = copy(hurtNum);
+
+        this.doSkill(pet.passiveSkills, 'ReduceInjury', (skill: SkillAttr) => {
+            hurt = rmFloatPoint(hurt * (1 - skill.ReduceInjury.efficiency));
+        })
+
         for (const buff of pet.buff) {
             if (!isEmpty(buff.shield) && buff.shield > 0) {
                 const oldShield: number = copy(buff.shield);
@@ -117,18 +207,37 @@ export class FightComponent implements OnInit {
                 }
             }
         }
-        pet.current_HP = pet.current_HP - hurt;
+        this.bloodLose(pet, hurt);
         console.log(`${pet.name} 受到 ${hurt} 点生命值伤害`);
+        return hurt;
     }
 
     setRound() {
-        this.pet_my.isRound = !this.pet_my.isRound;
-        this.pet_Enemy.isRound = !this.pet_Enemy.isRound;
+        const stiffIndex_my = this.pet_my.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.stiff));
+        const stiffIndex_Enemy = this.pet_Enemy.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.stiff));
+        if (!this.pet_my.isRound && stiffIndex_my > -1) {
+            this.pet_my.debuff[stiffIndex_my].currentRound++;
+            console.log(`${this.pet_my.name} 僵住，跳过一回合`);
+            console.log('------------回合结束-----------')
+        } else if (!this.pet_Enemy.isRound && stiffIndex_Enemy > -1) {
+            this.pet_Enemy.debuff[stiffIndex_Enemy].currentRound++;
+            console.log(`${this.pet_Enemy.name} 僵住，跳过一回合`);
+            console.log('------------回合结束-----------')
+        } else {
+            this.pet_my.isRound = !this.pet_my.isRound;
+            this.pet_Enemy.isRound = !this.pet_Enemy.isRound;
+        }
+
+        if (this.pet_Enemy.isRound) {
+            setTimeout(() => {
+                this.attack(this.pet_Enemy, this.pet_my);
+            }, 0);
+        }
+        this.current_roundNum++;
     }
 
     isDead(pet: pet): boolean {
-        if (pet.current_HP <= 0) {
-            pet.current_HP = 0;
+        if (pet.current_HP === 0) {
             console.log(getLifeStr(pet));
             console.log(`${pet.name} 已死亡`);
             return true;
@@ -140,12 +249,10 @@ export class FightComponent implements OnInit {
     afterAttack(pet: pet) {
         for (const debuff of pet.debuff) {
             if (pet.isRound) {
-                if (!isEmpty(debuff.seriousInjury)) { // 重伤效果要自己回合过后才能算一回合
-                    debuff.currentRound++;
-                }
+
             } else {
                 if (!isEmpty(debuff.bleeding)) {
-                    pet.current_HP -= debuff.bleeding;
+                    this.bloodLose(pet, debuff.bleeding);
                     console.log(`流血效果，失去 ${debuff.bleeding} 点生命值`);
                     debuff.currentRound++;
                 }
@@ -170,25 +277,35 @@ export class FightComponent implements OnInit {
 
     // 获取当前攻击的攻击力
     getPower(pet: pet): number {
-        let power: number = pet.power;
+        let power: number = copy(pet.power);
+        this.doSkill(pet.passiveSkills, 'IncreasePower', (skill: SkillAttr) => {
+            pet.buff.push({
+                increasePower: skill.IncreasePower.efficiency,
+                roundNum: skill.IncreasePower.roundNum,
+                currentRound: 0
+            })
+        });
+
         for (const buff of pet.buff) {
             if (!isEmpty(buff.increasePower)) { // 是否存在增加攻击力的buff
-                power = rmFloatPoint(power * (1 + buff.increasePower));
+                power = rmFloatPoint(power + (pet.power * buff.increasePower));
+                buff.currentRound++;
             }
         }
         for (const debuff of pet.debuff) {
             if (!isEmpty(debuff.reducePower)) { // 是否存在减少攻击力的debuff
-                power = rmFloatPoint(power * (1 - debuff.reducePower));
+                power = rmFloatPoint(power - (pet.power * debuff.reducePower));
+                debuff.currentRound++;
             }
         }
-        this.doSkill(pet.passiveSkills, 'ViolentAttack', skill => { // 暴击
+        this.doSkill(pet.passiveSkills, 'ViolentAttack', (skill: SkillAttr) => { // 暴击
             power = rmFloatPoint(power * skill.ViolentAttack.hurtNum); // 攻击力✖️暴击伤害
         });
         return power;
     }
 
     doSkill(skills: SkillAttr[], skillName: string, func: Function) {
-        const skillIndex: number = skills.findIndex(skill => !isEmpty(skill[skillName]));
+        const skillIndex: number = skills.findIndex((skill: SkillAttr) => !isEmpty(skill[skillName]));
         if (skillIndex > -1) {
             const isHap: boolean = isHappen(skills[skillIndex][skillName].probability);
             if (isHap) func(skills[skillIndex]);
