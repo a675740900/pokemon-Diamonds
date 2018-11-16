@@ -1,4 +1,4 @@
-import { SkillAttr, ReduceInjury, BloodSucking, Stiff, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood } from "../skill/skill.component";
+import { SkillAttr, ReduceInjury, BloodSucking, Stiff, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Ailent } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
 import { copy } from "src/app/common-tool";
 
@@ -29,10 +29,13 @@ export enum PetType {
 
 export class Buff {
     bleeding?: number; // 流血
+    poisoning?: number; // 中毒
     seriousInjury?: number; // 是否重伤
     stiff?: boolean; // 是否僵硬
+    ailent?: boolean; // 是否沉默
     reducePower?: number; // 减少攻击力
     increasePower?: number; // 增加攻击力
+    increaseBleedingProbability?: number; // 增加流血几率
     roundNum: number; // 回合数
     currentRound: number; // 当前回合数
 }
@@ -45,12 +48,12 @@ export class pet {
     MP: number; // 蓝量
     shield: number = 0; // 护盾
     power: number; // 力量（攻击力）
-    level: number; // 阶级
+    level: number = 1; // 阶级
     HPProp: number;
     MPProp: number;
     powerProp: number;
-    maxLevel: number; 
-    maxGrade: number = 60; 
+    maxLevel: number;
+    maxGrade: number = 60;
     defenses: number; // 防御力
     pettype: PetType; // 属性
     isRound?: boolean; // 当前是否为自己回合
@@ -98,15 +101,15 @@ export class Argy extends pet {
     HPProp: number = 6.7;
     MPProp: number = 2.6;
     powerProp: number = 1;
-    maxLevel: number = 2; 
+    maxLevel: number = 2;
     defenses: number = 0;
     pettype: PetType = PetType.PLANT;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时20%吸血效果', BloodSucking: new BloodSucking(1, 0.2), level: 1},
-        { memo: '攻击时，10%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.1, 1), level: 1 },
-        { memo: '攻击时，将造成的伤害的15%转换为护盾', ShieldFromAttack: new ShieldFromAttack(1, 0.15), level: 2},
-        { memo: '终极奥义：过端午！生命值低于30%，被攻击时有20%的几率会回复已损失生命值20%的生命值', IncreaseBlood: new IncreaseBlood(0.4, 0.20, 0.3), level: 2},
+        { memo: '攻击时20%吸血效果', BloodSucking: new BloodSucking(1, 0.2), level: 1 },
+        { memo: '攻击时，10%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.1, 1), level: 1, skillTip: SkillTip.TWINING },
+        { memo: '攻击时，将造成的伤害的15%转换为护盾', ShieldFromAttack: new ShieldFromAttack(1, 0.15), level: 2 },
+        { memo: '终极奥义：过端午！生命值低于30%，被攻击时有35%的几率会回复已损失生命值20%的生命值', IncreaseBlood: new IncreaseBlood(0.35, 0.20, 0.3), level: 2, skillTip: SkillTip.DRAGONBOAT },
         // { memo: '攻击时，10%的几率是敌人中毒，持续3回合', Bleeding: new Bleeding(0.1, 0.04, 3, 0), level: 2},
     ];
 }
@@ -122,13 +125,13 @@ export class Mantis extends pet {
     HPProp: number = 6.8;
     MPProp: number = 2.5;
     powerProp: number = 1.1;
-    maxLevel: number = 2; 
+    maxLevel: number = 2;
     defenses: number = 3;
     pettype: PetType = PetType.BEAST;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时，有15%的几率使敌人进入流血状态，持续3个回合', Bleeding: new Bleeding(0.15, 0.04, 3, 0.5), level: 1 },
-        { memo: '攻击时，有10%的几率暴击，暴击伤害150%', ViolentAttack: new ViolentAttack(0.1, 1.5), level: 2 },
+        { memo: '攻击时，有15%的几率使敌人进入流血状态，持续3个回合', Bleeding: new Bleeding(0.3, 0.04, 3, 0.5), level: 1, skillTip: SkillTip.BLEEDING },
+        { memo: '攻击时，有10%的几率暴击，暴击伤害150%，暴击造成的伤害流血几率翻倍', ViolentAttack: new ViolentAttack(0.1, 0.5, 1), level: 2 },
     ];
 }
 
@@ -143,13 +146,14 @@ export class CupricSnake extends pet {
     HPProp: number = 9.8;
     MPProp: number = 2.2;
     powerProp: number = 1;
-    maxLevel: number = 2; 
+    maxLevel: number = 2;
     defenses: number = 3;
     pettype: PetType = PetType.METAL;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '身体坚硬，有15%的伤害减免', ReduceInjury: new ReduceInjury(1, 0.15) },
-        { memo: '攻击时10%的几率使敌人石化，无法行动一回合', Stiff: new Stiff(0.1, 1) },
+        { memo: '身体坚硬，有15%的伤害减免', ReduceInjury: new ReduceInjury(1, 0.15), level: 1, skillTip: SkillTip.BODYHARD },
+        { memo: '攻击时10%的几率使敌人石化，无法行动一回合', Stiff: new Stiff(0.1, 1), level: 1, skillTip: SkillTip.PETRIFACTION },
+        { memo: '攻击石化状态的敌人伤害增加50%', AttackAbnormal: new AttackAbnormal(1, 0.5, 'Stiff'), level: 2, skillTip: SkillTip.PETRIFACTION },
     ];
 }
 
@@ -164,13 +168,14 @@ export class Penguin extends pet {
     HPProp: number = 7;
     MPProp: number = 3.2;
     powerProp: number = 0.9;
-    maxLevel: number = 2; 
+    maxLevel: number = 2;
     defenses: number = 1;
     pettype: PetType = PetType.WATER;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '攻击时，有35%的几率使敌人水肿，其攻击力下降30%，持续一回合', ReducePower: new ReducePower(0.35, 0.3, 1) },
-        { memo: '受到伤害时，有15%的几率钻入水中躲避50%的伤害', Dodge: new Dodge(0.15, 0.5) },
+        { memo: '攻击时，有35%的几率使敌人水肿，其攻击力下降30%，持续一回合', ReducePower: new ReducePower(0.35, 0.3, 1), level: 1, skillTip: SkillTip.EDEMA },
+        { memo: '受到伤害时，有25%的几率钻入水中躲避40%的伤害，移除所有减异效果', Dodge: new Dodge(0.25, 0.4, true), level: 1, skillTip: SkillTip.DIVING },
+        { memo: '攻击时，有50%的几率使敌人沉默，无法发动被动技能，持续一回合', Ailent: new Ailent(0.5, 1), level: 1, skillTip: SkillTip.AILENT },
     ];
 }
 
@@ -185,12 +190,12 @@ export class Sparrow extends pet {
     HPProp: number = 6.8;
     MPProp: number = 2.6;
     powerProp: number = 0.9;
-    maxLevel: number = 2; 
+    maxLevel: number = 2;
     defenses: number = 1;
     pettype: PetType = PetType.FLIGHT;
 
     passiveSkills: SkillAttr[] = [
-        { memo: '飞的快，受到伤害时，有20%的几率躲避伤害', Dodge: new Dodge(0.1, 1) },
-        { memo: '居高临下，增加20%的攻击力', IncreasePower: new IncreasePower(1, 0.2, 1) },
+        { memo: '飞的快，受到伤害时，有20%的几率躲避伤害', Dodge: new Dodge(0.1, 1), level: 1, skillTip: SkillTip.FLYINGFAST },
+        { memo: '居高临下，增加20%的攻击力', IncreasePower: new IncreasePower(1, 0.2, 1), level: 1 },
     ];
 } 

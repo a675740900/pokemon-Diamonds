@@ -3,38 +3,5 @@
     <h1>
         {{ title }}
     </h1>
-    <img width="300" alt="Angular Logo" src=".\image\home.jpeg">
 </div>
-<div class="center mainBtn">
-    <button mat-raised-button color="warn" (click)='startGame()'>新游戏</button>
-    <button mat-raised-button color="warn">存档</button>
-    <button mat-raised-button color="warn" (click)='setting()'>⚙设置</button>
-</div>
-
-<div  class="example-form"> 
-  <mat-form-field class="example-full-width"> 
-    <input  matInput  placeholder="宠物guid" [(ngModel)]='test.a'> 
-  </mat-form-field>
-
-  <mat-form-field class="example-full-width"> 
-    <input  matInput  placeholder="宠物阶级" [(ngModel)]='test.b'> 
-  </mat-form-field>
-  <mat-form-field class="example-full-width"> 
-    <input  matInput  placeholder="宠物等级" [(ngModel)]='test.c'>
-  </mat-form-field> 
-
-  <mat-form-field class="example-full-width"> 
-    <input  matInput  placeholder="敌人guid" [(ngModel)]='test.d'>
-  </mat-form-field> 
-  <mat-form-field class="example-full-width"> 
-    <input  matInput  placeholder="敌人阶级" [(ngModel)]='test.e'>
-  </mat-form-field> 
-  <mat-form-field class="example-full-width"> 
-    <input  matInput  placeholder="敌人等级" [(ngModel)]='test.f'> 
-  </mat-form-field>
-
-</div>
-
-<button mat-raised-button color="warn" (click)='fight()'>战斗</button>
-
 <router-outlet></router-outlet>

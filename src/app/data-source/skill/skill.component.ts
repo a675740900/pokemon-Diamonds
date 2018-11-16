@@ -1,3 +1,5 @@
+import { Buff } from "../pet/pet.component";
+
 /**
  * 技能属性
  */
@@ -11,10 +13,13 @@ export class SkillAttr {
     ReduceInjury?: ReduceInjury; // 减伤
     ShieldFromAttack?: ShieldFromAttack; // 护盾
     Stiff?: Stiff; // 僵硬
+    Ailent?: Ailent; // 沉默
     ReducePower?: ReducePower; // 减少攻击力
     Dodge?: Dodge; // 闪避
     IncreasePower?: IncreasePower; // 增加攻击力
     IncreaseBlood?: IncreaseBlood; // 增加已损失生命值百分比的血量
+    AttackAbnormal?: AttackAbnormal; // 攻击异常状态,增加伤害
+    skillTip?: SkillTip; // 提示词
 }
 
 /**
@@ -48,6 +53,19 @@ export enum SkillType {
 export enum Target {
     self = 1, // 对自己释放
     enemy = 2 // 对敌人释放
+}
+
+export enum SkillTip {
+    TWINING = '被缠绕',
+    PETRIFACTION = '石化',
+    DRAGONBOAT = '发动终极奥义：过端午！',
+    BLEEDING = '进入流血状态',
+    POISONING = '中毒',
+    EDEMA = '水肿',
+    DIVING = '潜入水中',
+    FLYINGFAST = '飞得快',
+    BODYHARD = '身体坚硬',
+    AILENT = '沉默了',
 }
 
 /**
@@ -111,12 +129,13 @@ export class RealAttack {
 export class ViolentAttack {
     name: string = 'ViolentAttack';
     probability: number; // 暴击几率 0.5表示50%的暴击几率
-    hurtNum: number; // 暴击伤害 2表示200%
+    efficiency: number; // 暴击伤害 2表示200%
+    increaseBleedingProbability: number; // 增加流血几率
     InjuryStatus: InjuryStatus = InjuryStatus.beforeCount;
     AttackTime: AttackTime = AttackTime.toAttack;
 
-    constructor(probability: number, hurtNum: number) {
-        [this.probability, this.hurtNum] = [probability, hurtNum];
+    constructor(probability: number, efficiency: number, increaseBleedingProbability: number) {
+        [this.probability, this.efficiency, this.increaseBleedingProbability] = [probability, efficiency, increaseBleedingProbability];
     }
 }
 
@@ -186,10 +205,11 @@ export class Dodge {
     name: string = 'Dodge';
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
+    removeDeBuff: boolean; // 是否移除debuff
     triggerRound: Target = Target.enemy; // 触发回合
 
-    constructor(probability: number, efficiency: number) {
-        [this.probability, this.efficiency] = [probability, efficiency];
+    constructor(probability: number, efficiency: number, removeDeBuff: boolean = false) {
+        [this.probability, this.efficiency, this.removeDeBuff] = [probability, efficiency, removeDeBuff];
     }
 }
 
@@ -208,6 +228,7 @@ export class IncreasePower {
     }
 }
 
+// 回复已损失生命值
 export class IncreaseBlood {
     name: string = 'IncreaseBlood';
     probability: number; // 触发几率 0.5表示50%的
@@ -217,5 +238,27 @@ export class IncreaseBlood {
 
     constructor(probability: number, efficiency: number, bloodCondition: number) {
         [this.probability, this.efficiency, this.bloodCondition] = [probability, efficiency, bloodCondition];
+    }
+}
+
+// 攻击异常状态,增加伤害
+export class AttackAbnormal {
+    name: string = 'AttackAbnormal';
+    probability: number; // 触发几率 0.5表示50%的
+    efficiency: number; // 效率 0.5表示50%
+    abnormal: string;
+
+    constructor(probability: number, efficiency: number, abnormal: string) {
+        [this.probability, this.efficiency, this.abnormal] = [probability, efficiency, abnormal];
+    }
+}
+
+export class Ailent {
+    name: string = 'Ailent';
+    probability: number; // 触发几率 0.5表示50%的
+    roundNum: number; // 持续回合数
+
+    constructor(probability: number, roundNum: number) {
+        [this.probability, this.roundNum] = [probability, roundNum];
     }
 }

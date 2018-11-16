@@ -24,7 +24,7 @@ export class Warrior {
     // new base_role_attr(1, 6, 2, 4);
 
     SkillAttr: SkillAttr[] = [
-        { memo: '攻击时，有20%的几率造成双倍伤害', ViolentAttack: new ViolentAttack(0.2, 2) },
+        { memo: '攻击时，有20%的几率造成双倍伤害', ViolentAttack: new ViolentAttack(0.2, 2, 0) },
         { memo: '减少受到的10%的伤害', ReduceInjury: new ReduceInjury(1, 0.1) },
     ];
 
