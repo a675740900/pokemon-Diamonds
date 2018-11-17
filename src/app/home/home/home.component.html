@@ -1,5 +1,5 @@
 <div [@routerAnimate]="boxState" (@routerAnimate.done)='routerAnimateCBack()'>
-    <div style="text-align:center; width: 100px">
+    <div style="text-align:center;">
         <h1 style="color: #ff4868">
             {{ title }}
         </h1>
@@ -8,7 +8,7 @@
         <img width="300" alt="口袋妖怪图标" src="../image/home.jpeg">
     </div>
 
-    <div class="center mainBtn">
+    <div class="center mainBtn" style="width: 100px">
         <button mat-raised-button color="warn" (click)='startGame()'>新游戏</button>
         <button mat-raised-button color="warn">存档</button>
         <button mat-raised-button color="warn" (click)='setting()'>⚙设置</button>
