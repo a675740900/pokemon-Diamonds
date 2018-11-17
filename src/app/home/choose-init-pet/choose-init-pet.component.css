@@ -1,0 +1,8 @@
+.topLayout {
+    display: flex;
+    justify-content: space-around;
+}
+
+.secondLayout {
+    width: 20%;
+}

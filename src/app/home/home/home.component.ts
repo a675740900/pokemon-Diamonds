@@ -1,21 +1,45 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, HostBinding } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
 import { petsITFS, FightComponent } from '../fight/fight.component';
+import { homeRouterAnimate } from '../../component/animations/router.animate';
+import { PageRouterParam } from './home-common';
 
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
-    styleUrls: ['./home.component.css']
+    styleUrls: ['./home.component.css'],
+    animations: [
+        homeRouterAnimate
+    ]
 })
 export class HomeComponent implements OnInit {
-
+    title = '口袋妖怪-钻石版';
+    lastPageParam: PageRouterParam;
+    boxState: string;
     test: any = {};
     animal: string;
     name: string;
-    constructor(private router: Router, public dialog: MatDialog) {
+    constructor(private router: Router, public dialog: MatDialog, private activatedRoute: ActivatedRoute) {
+        activatedRoute.queryParams.subscribe((queryParams: PageRouterParam) => {
+            this.lastPageParam = queryParams;
+            if (this.lastPageParam.isBack) {
+                this.boxState = 'fromBack';
+            }
+        });
+    }
 
+    routerAnimateCBack() {
+        switch (this.boxState) {
+            case 'goNext':
+                this.router.navigate(['/home/choose-init-pet'], {
+                    queryParams: {
+                        isNext: true
+                    }
+                });
+                break;
+        }
     }
 
     setting(): void {
@@ -54,7 +78,7 @@ export class HomeComponent implements OnInit {
     }
 
     startGame() {
-        this.router.navigate(['/home/choose-init-pet']);
+        this.boxState = 'goNext';
     }
 
     ngOnInit() {

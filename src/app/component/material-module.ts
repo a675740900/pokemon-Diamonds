@@ -84,7 +84,7 @@ import {
         ScrollingModule,
     ]
 })
-export class DemoMaterialModule { }
+export class MaterialModule { }
 
 
 /**  Copyright 2018 Google Inc. All Rights Reserved.

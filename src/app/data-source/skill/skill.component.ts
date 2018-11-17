@@ -179,7 +179,7 @@ export class Stiff {
     triggerRound: Target = Target.self; // 触发回合
 
     constructor(probability: number, roundNum: number) {
-        [this.probability, this.roundNum] = [probability, roundNum];
+        [this.probability, this.roundNum] = [probability, roundNum + 1];
     }
 }
 

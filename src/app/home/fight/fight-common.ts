@@ -1,5 +1,5 @@
 import { pet, Buff } from "../../data-source/pet/pet.component";
-import { isEmpty, isHappen } from "../../common-tool";
+import { isEmpty, isHappen, rmFloatPoint } from "../common-tool";
 import { SkillAttr } from "../../data-source/skill/skill.component";
 
 export const getLifeStr = (pet: pet): string => {
@@ -70,4 +70,14 @@ export const getBuffIndex = (buffs: Buff[], buffName: string): number => {
 export const addCurrentRound = (pet: pet, buffType: string, buffName: string) => {
     const buffIndex: number = getBuffIndex(pet[buffType], buffName);
     if (buffIndex > -1) pet[buffType][buffIndex].currentRound++;
+}
+
+/**
+ * 计算护甲后的伤害
+ * @param defenses 护甲值
+ * @param hurt 受到的伤害
+ */
+export const DefensesOperation = (defenses: number, hurt: number): number => {
+    const defenseProportion: number = 100; // 100表示每一点护甲能，就需要受到200%最大生命值的伤害才能死亡
+    return rmFloatPoint((defenseProportion * hurt) / (defenseProportion + defenses));
 }

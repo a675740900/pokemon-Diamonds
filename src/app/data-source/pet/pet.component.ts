@@ -1,6 +1,6 @@
 import { SkillAttr, ReduceInjury, BloodSucking, Stiff, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Ailent } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
-import { copy } from "src/app/common-tool";
+import { copy } from "../../home/common-tool";
 
 export const petList_plant: number[] = [1];
 export const petList_beast: number[] = [2];
@@ -52,6 +52,7 @@ export class pet {
     HPProp: number;
     MPProp: number;
     powerProp: number;
+    defensesProp: number;
     maxLevel: number;
     maxGrade: number = 60;
     defenses: number; // 防御力
@@ -67,23 +68,24 @@ export class pet {
 
 export class LevelPropITFS {
     level: number;
-    powerProp: number; // 比例
     HPProp: number; // 比例
     MPProp: number; // 比例
+    powerProp: number; // 比例
+    defensesProp: number; // 比例
 
-    constructor(level: number, powerProp: number, HPProp: number, MPProp: number) {
-        [this.level, this.powerProp, this.HPProp, this.MPProp] = [level, powerProp, HPProp, MPProp];
+    constructor(level: number, powerProp: number, HPProp: number, MPProp: number, defensesProp: number) {
+        [this.level, this.powerProp, this.HPProp, this.MPProp, this.defensesProp] = [level, powerProp, HPProp, MPProp, defensesProp];
     }
 }
 
 // 提升阶级属性提升比例
 export const LevelProp: LevelPropITFS[] = [
-    new LevelPropITFS(0, -0.15, -0.15, -0.15),
-    new LevelPropITFS(1, 0, 0, 0),
-    new LevelPropITFS(2, 0.14, 0.14, 0.14),
-    new LevelPropITFS(3, 0.13, 0.13, 0.13),
-    new LevelPropITFS(4, 0.12, 0.12, 0.12),
-    new LevelPropITFS(5, 0.1, 0.1, 0.1),
+    new LevelPropITFS(0, -0.15, -0.15, -0.15, -0.15),
+    new LevelPropITFS(1, 0, 0, 0, 0),
+    new LevelPropITFS(2, 0.14, 0.14, 0.14, 0.14),
+    new LevelPropITFS(3, 0.28, 0.28, 0.28, 0.28),
+    new LevelPropITFS(4, 0.42, 0.42, 0.42, 0.42),
+    new LevelPropITFS(5, 0.56, 0.56, 0.56, 0.56),
 ];
 
 export const getLevelProp = (): LevelPropITFS[] => {
@@ -100,9 +102,10 @@ export class Argy extends pet {
     level: number = 1; // 阶级1
     HPProp: number = 6.7;
     MPProp: number = 2.6;
-    powerProp: number = 1;
+    powerProp: number = 2;
+    defensesProp: number = 0.5;
     maxLevel: number = 2;
-    defenses: number = 0;
+    defenses: number = 1;
     pettype: PetType = PetType.PLANT;
 
     passiveSkills: SkillAttr[] = [
@@ -124,9 +127,10 @@ export class Mantis extends pet {
     level: number = 1; // 阶级1
     HPProp: number = 6.8;
     MPProp: number = 2.5;
-    powerProp: number = 1.1;
+    powerProp: number = 2.2;
+    defensesProp: number = 0.6;
     maxLevel: number = 2;
-    defenses: number = 3;
+    defenses: number = 2;
     pettype: PetType = PetType.BEAST;
 
     passiveSkills: SkillAttr[] = [
@@ -145,7 +149,8 @@ export class CupricSnake extends pet {
     level: number = 1; // 阶级1
     HPProp: number = 9.8;
     MPProp: number = 2.2;
-    powerProp: number = 1;
+    powerProp: number = 1.6;
+    defensesProp: number = 1;
     maxLevel: number = 2;
     defenses: number = 3;
     pettype: PetType = PetType.METAL;
@@ -167,7 +172,8 @@ export class Penguin extends pet {
     level: number = 1; // 阶级1
     HPProp: number = 7;
     MPProp: number = 3.2;
-    powerProp: number = 0.9;
+    powerProp: number = 1.8;
+    defensesProp: number = 0.6;
     maxLevel: number = 2;
     defenses: number = 1;
     pettype: PetType = PetType.WATER;
@@ -189,7 +195,8 @@ export class Sparrow extends pet {
     level: number = 1; // 阶级1
     HPProp: number = 6.8;
     MPProp: number = 2.6;
-    powerProp: number = 0.9;
+    powerProp: number = 1.8;
+    defensesProp: number = 0.6;
     maxLevel: number = 2;
     defenses: number = 1;
     pettype: PetType = PetType.FLIGHT;
