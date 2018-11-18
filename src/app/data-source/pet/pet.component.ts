@@ -110,7 +110,7 @@ export class Argy extends pet {
 
     passiveSkills: SkillAttr[] = [
         { memo: '攻击时20%吸血效果', BloodSucking: new BloodSucking(1, 0.2), level: 1 },
-        { memo: '攻击时，10%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.1, 1), level: 1, skillTip: SkillTip.TWINING },
+        { memo: '攻击时，10%的几率缠绕敌人，使其无法行动一回合', Stiff: new Stiff(0.1, 1), level: 2, skillTip: SkillTip.TWINING },
         { memo: '攻击时，将造成的伤害的15%转换为护盾', ShieldFromAttack: new ShieldFromAttack(1, 0.15), level: 2 },
         { memo: '终极奥义：过端午！生命值低于30%，被攻击时有35%的几率会回复已损失生命值20%的生命值', IncreaseBlood: new IncreaseBlood(0.35, 0.20, 0.3), level: 2, skillTip: SkillTip.DRAGONBOAT },
         // { memo: '攻击时，10%的几率是敌人中毒，持续3回合', Bleeding: new Bleeding(0.1, 0.04, 3, 0), level: 2},
@@ -150,14 +150,14 @@ export class CupricSnake extends pet {
     HPProp: number = 9.8;
     MPProp: number = 2.2;
     powerProp: number = 1.6;
-    defensesProp: number = 1;
+    defensesProp: number = 0.7;
     maxLevel: number = 2;
     defenses: number = 3;
     pettype: PetType = PetType.METAL;
 
     passiveSkills: SkillAttr[] = [
         { memo: '身体坚硬，有15%的伤害减免', ReduceInjury: new ReduceInjury(1, 0.15), level: 1, skillTip: SkillTip.BODYHARD },
-        { memo: '攻击时10%的几率使敌人石化，无法行动一回合', Stiff: new Stiff(0.1, 1), level: 1, skillTip: SkillTip.PETRIFACTION },
+        { memo: '攻击时10%的几率使敌人石化，无法行动一回合', Stiff: new Stiff(0.1, 1), level: 2, skillTip: SkillTip.PETRIFACTION },
         { memo: '攻击石化状态的敌人伤害增加50%', AttackAbnormal: new AttackAbnormal(1, 0.5, 'Stiff'), level: 2, skillTip: SkillTip.PETRIFACTION },
     ];
 }
