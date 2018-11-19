@@ -84,23 +84,23 @@ export class FightComponent implements OnInit {
         if (restraintNum == 1 || restraintNum == 4) {
             if ((pet1.pettype > pet2.pettype && pet2.pettype != 0) || (restraintNum == 4 && pet1.pettype == 0)) {
                 pet1.buff.push({
-                    increasePower: 0.2,
+                    IncreasePower: 0.2,
                     roundNum: 99,
                     currentRound: 0
                 })
                 pet2.debuff.push({
-                    reducePower: 0.2,
+                    ReducePower: 0.2,
                     roundNum: 99,
                     currentRound: 0
                 })
             } else {
                 pet2.buff.push({
-                    increasePower: 0.2,
+                    IncreasePower: 0.2,
                     roundNum: 99,
                     currentRound: 0
                 })
                 pet1.debuff.push({
-                    reducePower: 0.2,
+                    ReducePower: 0.2,
                     roundNum: 99,
                     currentRound: 0
                 })
@@ -128,7 +128,7 @@ export class FightComponent implements OnInit {
             hurt = rmFloatPoint(power * (1 + skill.ViolentAttack.efficiency)); // 攻击力✖️暴击伤害
             violentAttackStr = `暴击！ `;
             pet_atta.buff.push({
-                increaseBleedingProbability: skill.ViolentAttack.increaseBleedingProbability,
+                IncreaseBleedingProbability: skill.ViolentAttack.IncreaseBleedingProbability,
                 roundNum: 1,
                 currentRound: 1
             })
@@ -138,7 +138,7 @@ export class FightComponent implements OnInit {
 
         doSkill(pet_atta, 'Ailent', (skill: SkillAttr) => {
             pet_beAtta.debuff.push({
-                ailent: true,
+                Ailent: true,
                 roundNum: skill.Ailent.roundNum,
                 currentRound: 0
             })
@@ -158,15 +158,15 @@ export class FightComponent implements OnInit {
 
         if (hurt > 0) {
             const causeHurt = this.toAttack(pet_atta, pet_beAtta, hurt);
-            
+
             // 吸血
             doSkill(pet_atta, 'BloodSucking', (skill: SkillAttr) => {
                 let bloodSuckingNum: number = rmFloatPoint(causeHurt * skill.BloodSucking.efficiency);
-                const seriousInjuryBuffIndex: number = pet_atta.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.seriousInjury));
+                const seriousInjuryBuffIndex: number = pet_atta.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.SeriousInjury));
                 let str: string = '';
                 if (seriousInjuryBuffIndex > -1) {
-                    str = `重伤效果，治疗效率降低 ${toPercentage(pet_atta.debuff[seriousInjuryBuffIndex].seriousInjury)} `;
-                    bloodSuckingNum = rmFloatPoint(bloodSuckingNum * pet_atta.debuff[seriousInjuryBuffIndex].seriousInjury);
+                    str = `重伤效果，治疗效率降低 ${toPercentage(pet_atta.debuff[seriousInjuryBuffIndex].SeriousInjury)} `;
+                    bloodSuckingNum = rmFloatPoint(bloodSuckingNum * pet_atta.debuff[seriousInjuryBuffIndex].SeriousInjury);
                 }
                 this.bloodRecovery(pet_atta, bloodSuckingNum);
                 console.log(`${pet_atta.name} ${str}治疗 ${bloodSuckingNum}`);
@@ -176,33 +176,52 @@ export class FightComponent implements OnInit {
                 return;
             }
 
-            // 僵硬
-            doSkill(pet_atta, 'Stiff', (skill: SkillAttr) => {
+            // 石化僵硬
+            doSkill(pet_atta, 'Stiff_Stone', (skill: SkillAttr) => {
                 console.log(`${pet_beAtta.name} ${skill.skillTip}，无法动弹`);
                 pet_beAtta.debuff.push({
-                    stiff: true,
-                    roundNum: skill.Stiff.roundNum,
+                    Stiff_Stone: true,
+                    roundNum: skill.Stiff_Stone.roundNum,
+                    currentRound: 0
+                })
+            })
+
+            // 僵硬
+            doSkill(pet_atta, 'Stiff_Tiwing', (skill: SkillAttr) => {
+                console.log(`${pet_beAtta.name} ${skill.skillTip}，无法动弹`);
+                pet_beAtta.debuff.push({
+                    Stiff_Tiwing: true,
+                    roundNum: skill.Stiff_Stone.roundNum,
                     currentRound: 0
                 })
             })
 
             // 流血
             doSkill(pet_atta, 'Bleeding', (skill: SkillAttr) => { // 流血计算
-                console.log(`${pet_beAtta.name} ${skill.skillTip}`);
+                console.log(`${pet_beAtta.name} 进入${skill.skillTip}状态`);
+                let isImmune: boolean = false; // 是否被免疫
+                // 免疫
+                doSkill(pet_beAtta, 'ImmuneSkill', (skill2: SkillAttr) => {
+                    if (skill2.ImmuneSkill.immuneSkill.includes(skill.Bleeding.name)) {
+                        isImmune = true;
+                        console.log(`${pet_beAtta.name} 免疫 ${skill.skillTip}`);
+                    }
+                })
+                if (isImmune) return;
                 const bleedingNum = rmFloatPoint(pet_beAtta.HP * skill.Bleeding.efficiency);
                 if (skill.skillTip == SkillTip.BLEEDING) {
                     pet_beAtta.debuff.push({
-                        bleeding: bleedingNum,
+                        Bleeding: bleedingNum,
                         roundNum: skill.Bleeding.roundNum,
                         currentRound: 0,
                     }, {
-                            seriousInjury: skill.Bleeding.seriousInjury,
+                            SeriousInjury: skill.Bleeding.SeriousInjury,
                             roundNum: skill.Bleeding.roundNum,
                             currentRound: 0,
                         })
                 } else if (skill.skillTip === SkillTip.POISONING) {
                     pet_beAtta.debuff.push({
-                        poisoning: bleedingNum,
+                        Poisoning: bleedingNum,
                         roundNum: skill.Bleeding.roundNum,
                         currentRound: 0,
                     })
@@ -213,7 +232,7 @@ export class FightComponent implements OnInit {
             doSkill(pet_atta, 'ReducePower', (skill: SkillAttr) => {
                 console.log(`${pet_beAtta.name} ${SkillTip.EDEMA} 减少 ${toPercentage(skill.ReducePower.efficiency)} 攻击力`);
                 pet_beAtta.debuff.push({
-                    reducePower: skill.ReducePower.efficiency,
+                    ReducePower: skill.ReducePower.efficiency,
                     roundNum: skill.ReducePower.roundNum,
                     currentRound: 0
                 })
@@ -256,9 +275,9 @@ export class FightComponent implements OnInit {
 
     getBloodFromSeriousInjury(pet: pet, cure: number): any {
         let obj: any = {};
-        const debuff: Buff = pet.debuff.find((debuff: Buff) => !isEmpty(debuff.seriousInjury) && debuff.seriousInjury > 0);
+        const debuff: Buff = pet.debuff.find((debuff: Buff) => !isEmpty(debuff.SeriousInjury) && debuff.SeriousInjury > 0);
         if (!isEmpty(debuff)) {
-            cure = rmFloatPoint(cure * (1 - debuff.seriousInjury));
+            cure = rmFloatPoint(cure * (1 - debuff.SeriousInjury));
             obj.isSeriousInjury = true;
         }
         obj.cure = cure;
@@ -366,25 +385,26 @@ export class FightComponent implements OnInit {
     // 检查buff效果
     afterAttack(pet: pet) {
         if (pet.isRound) { // 在自己回合添加回合数
-            addCurrentRound(pet, 'buff', 'increasePower');
-            addCurrentRound(pet, 'debuff', 'ailent');
-            addCurrentRound(pet, 'debuff', 'reducePower');
-            addCurrentRound(pet, 'debuff', 'seriousInjury');
+            addCurrentRound(pet, 'buff', 'IncreasePower');
+            addCurrentRound(pet, 'debuff', 'Ailent');
+            addCurrentRound(pet, 'debuff', 'ReducePower');
+            addCurrentRound(pet, 'debuff', 'SeriousInjury');
         } else {
-            addCurrentRound(pet, 'debuff', 'stiff');
+            addCurrentRound(pet, 'debuff', 'Stiff_Stone');
+            addCurrentRound(pet, 'debuff', 'Stiff_Tiwing');
         }
         for (const debuff of pet.debuff) {
             if (pet.isRound) {
 
             } else {
-                if (!isEmpty(debuff.bleeding)) {
-                    this.bloodLose(pet, debuff.bleeding);
-                    console.log(`流血效果，失去 ${debuff.bleeding} 点HP`);
+                if (!isEmpty(debuff.Bleeding)) {
+                    this.bloodLose(pet, debuff.Bleeding);
+                    console.log(`流血效果，失去 ${debuff.Bleeding} 点HP`);
                     debuff.currentRound++;
                 }
-                if (!isEmpty(debuff.poisoning)) {
-                    this.bloodLose(pet, debuff.poisoning);
-                    console.log(`中毒，失去 ${debuff.poisoning} 点HP`);
+                if (!isEmpty(debuff.Poisoning)) {
+                    this.bloodLose(pet, debuff.Poisoning);
+                    console.log(`中毒，失去 ${debuff.Poisoning} 点HP`);
                     debuff.currentRound++;
                 }
             }
@@ -411,20 +431,20 @@ export class FightComponent implements OnInit {
         let power: number = copy(pet.power);
         doSkill(pet, 'IncreasePower', (skill: SkillAttr) => {
             pet.buff.push({
-                increasePower: skill.IncreasePower.efficiency,
+                IncreasePower: skill.IncreasePower.efficiency,
                 roundNum: skill.IncreasePower.roundNum,
                 currentRound: 0
             })
         });
 
         for (const buff of pet.buff) {
-            if (!isEmpty(buff.increasePower)) { // 是否存在增加攻击力的buff
-                power = rmFloatPoint(power + (pet.power * buff.increasePower));
+            if (!isEmpty(buff.IncreasePower)) { // 是否存在增加攻击力的buff
+                power = rmFloatPoint(power + (pet.power * buff.IncreasePower));
             }
         }
         for (const debuff of pet.debuff) {
-            if (!isEmpty(debuff.reducePower)) { // 是否存在减少攻击力的debuff
-                power = rmFloatPoint(power - (pet.power * debuff.reducePower));
+            if (!isEmpty(debuff.ReducePower)) { // 是否存在减少攻击力的debuff
+                power = rmFloatPoint(power - (pet.power * debuff.ReducePower));
             }
         }
         return power;

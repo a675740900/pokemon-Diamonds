@@ -2,7 +2,7 @@
  * 技能属性
  */
 export class SkillAttr {
-    memo: string; // 技能说明
+    memo?: string; // 技能说明
     level?: number; // 技能所需阶级
     grade?: number; // 技能所需等级
     Bleeding?: Bleeding; // 流血
@@ -10,13 +10,15 @@ export class SkillAttr {
     ViolentAttack?: ViolentAttack; // 暴击
     ReduceInjury?: ReduceInjury; // 减伤
     ShieldFromAttack?: ShieldFromAttack; // 护盾
-    Stiff?: Stiff; // 僵硬
+    Stiff_Twining?: Stiff_Twining; // 缠绕僵硬
+    Stiff_Stone?: Stiff_Stone; // 缠绕僵硬
     Ailent?: Ailent; // 沉默
     ReducePower?: ReducePower; // 减少攻击力
     Dodge?: Dodge; // 闪避
     IncreasePower?: IncreasePower; // 增加攻击力
     IncreaseBlood?: IncreaseBlood; // 增加已损失生命值百分比的血量
     AttackAbnormal?: AttackAbnormal; // 攻击异常状态,增加伤害
+    ImmuneSkill?: ImmuneSkill; // 免疫状态
     skillTip?: SkillTip; // 提示词
 }
 
@@ -57,7 +59,7 @@ export enum SkillTip {
     TWINING = '被缠绕',
     PETRIFACTION = '石化',
     DRAGONBOAT = '发动终极奥义：过端午！',
-    BLEEDING = '进入流血状态',
+    BLEEDING = '流血',
     POISONING = '中毒',
     EDEMA = '水肿',
     DIVING = '潜入水中',
@@ -73,7 +75,7 @@ export class Bleeding {
     name: string = 'Bleeding';
     probability: number; // 流血几率 0.5表示50%的
     efficiency: number; // 效率 0.05表示每回合扣除最大生命值5%的生命值
-    seriousInjury: number; // 重伤效果，0.5表示回血效果减半
+    SeriousInjury: number; // 重伤效果，0.5表示回血效果减半
     probabilityProp: number; // 每级提升触发几率
     efficiencyProp: number; // 每级提升效率
     roundNum: number; // 持续时间
@@ -82,9 +84,9 @@ export class Bleeding {
     target: Target = Target.enemy;
     triggerRound: Target = Target.enemy; // 触发回合
 
-    constructor(probability: number, efficiency: number, roundNum: number, seriousInjury: number = 0.5, probabilityProp: number = 0, efficiencyProp: number = 0) {
-        [this.probability, this.efficiency, this.roundNum, this.seriousInjury, this.probabilityProp, this.efficiencyProp] =
-            [probability, efficiency, roundNum, seriousInjury, probabilityProp, efficiencyProp];
+    constructor(probability: number, efficiency: number, roundNum: number, SeriousInjury: number = 0.5, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.roundNum, this.SeriousInjury, this.probabilityProp, this.efficiencyProp] =
+            [probability, efficiency, roundNum, SeriousInjury, probabilityProp, efficiencyProp];
     }
 }
 
@@ -132,15 +134,15 @@ export class ViolentAttack {
     name: string = 'ViolentAttack';
     probability: number; // 暴击几率 0.5表示50%的暴击几率
     efficiency: number; // 暴击伤害 2表示200%
-    increaseBleedingProbability: number; // 增加流血几率
+    IncreaseBleedingProbability: number; // 增加流血几率
     probabilityProp: number; // 每级提升触发几率
     efficiencyProp: number; // 每级提升效率
     InjuryStatus: InjuryStatus = InjuryStatus.beforeCount;
     AttackTime: AttackTime = AttackTime.toAttack;
 
-    constructor(probability: number, efficiency: number, increaseBleedingProbability: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
-        [this.probability, this.efficiency, this.increaseBleedingProbability, this.probabilityProp, this.efficiencyProp] = 
-        [probability, efficiency, increaseBleedingProbability, probabilityProp, efficiencyProp];
+    constructor(probability: number, efficiency: number, IncreaseBleedingProbability: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.IncreaseBleedingProbability, this.probabilityProp, this.efficiencyProp] = 
+        [probability, efficiency, IncreaseBleedingProbability, probabilityProp, efficiencyProp];
     }
 }
 
@@ -179,11 +181,27 @@ export class ShieldFromAttack {
 }
 
 /**
- * 使敌人僵硬
+ * 使敌人缠绕僵硬
  */
-export class Stiff {
-    name: string = 'Stiff';
+export class Stiff_Twining {
+    name: string = 'Stiff_Twining';
     probability: number; // 僵硬几率
+    roundNum: number; // 僵硬回合数
+    probabilityProp: number; // 每级提升触发几率
+    triggerRound: Target = Target.self; // 触发回合
+
+    constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
+        [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum + 1, probabilityProp];
+    }
+}
+
+
+/**
+ * 使敌人石化僵硬
+ */
+export class Stiff_Stone {
+    name: string = 'Stiff_Stone';
+    probability: number; // 石化几率
     roundNum: number; // 僵硬回合数
     probabilityProp: number; // 每级提升触发几率
     triggerRound: Target = Target.self; // 触发回合
@@ -282,5 +300,17 @@ export class Ailent {
 
     constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
         [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum, probabilityProp];
+    }
+}
+
+// 免疫状态
+export class ImmuneSkill {
+    name: string = 'ImmuneSkill';
+    probability: number; // 触发几率 0.5表示50%的
+    probabilityProp: number; // 每级提升触发几率
+    immuneSkill: string[];
+
+    constructor(probability: number, probabilityProp: number = 0, immuneSkill: string[]) {
+        [this.probability, this.probabilityProp, this.immuneSkill] = [probability, probabilityProp, immuneSkill];
     }
 }

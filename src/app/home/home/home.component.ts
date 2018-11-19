@@ -18,7 +18,14 @@ export class HomeComponent implements OnInit {
     title = '口袋妖怪-钻石版';
     lastPageParam: PageRouterParam;
     boxState: string;
-    test: any = {};
+    test: any = {
+        a: 1,
+        b: 1,
+        c: 60,
+        d: 3,
+        e: 1,
+        f: 60
+    };
     animal: string;
     name: string;
     constructor(private router: Router, public dialog: MatDialog, private activatedRoute: ActivatedRoute) {

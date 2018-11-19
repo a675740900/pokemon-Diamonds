@@ -8,7 +8,7 @@ export const getLifeStr = (pet: pet): string => {
 
 export const getStiffIndex = (pet: pet): number => {
     return pet.debuff.findIndex((debuff: Buff) =>
-        !isEmpty(debuff.stiff) || debuff.stiff
+        debuff.Stiff_Stone || debuff.Stiff_Tiwing
     );
 }
 
@@ -19,12 +19,12 @@ export const isStiff = (pet: pet): boolean => {
 
 // 是否沉默
 export const isAilent = (pet: pet): boolean => {
-    return pet.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.ailent) || debuff.ailent) > -1;
+    return pet.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.Ailent) || debuff.Ailent) > -1;
 }
 
 // 是否重伤
 export const isSeriousInjury = (pet: pet): boolean => {
-    return pet.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.seriousInjury) && debuff.seriousInjury > 0) > -1
+    return pet.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.SeriousInjury) && debuff.SeriousInjury > 0) > -1
 }
 
 // 判断是否死亡
