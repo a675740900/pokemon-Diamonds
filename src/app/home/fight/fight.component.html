@@ -18,6 +18,9 @@
             <span class='blood-font'>{{pet_my.current_HP}}/{{pet_my.HP}}</span>
             <mat-progress-bar color='warn' mode="buffer" [value]="(pet_my.current_HP/pet_my.HP)*100" [bufferValue]='((pet_my.shield+pet_my.current_HP)/pet_my.HP)*100'></mat-progress-bar>
             <!-- <div #pet_my_span></div> -->
+            <div>
+                <img src="assets/image/petBuff/frozen.png">
+            </div>
         </div>
 
 
@@ -30,7 +33,7 @@
             {{pet_my.power}}
         </div>
 
-
+        
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
         <button mat-raised-button color="warn" [disabled]='!pet_my.isRound' (click)='attack_click()'>攻击</button>
