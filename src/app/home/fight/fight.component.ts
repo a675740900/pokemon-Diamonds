@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, ViewChild, Renderer2, ElementRef } from '@an
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
 import { getPet, pet, Buff, getLevelProp, LevelPropITFS } from '../../data-source/pet/pet.component';
-import { isEmpty, rmFloatPoint, isHappen, copy, toPercentage } from '../common-tool';
+import { isEmpty, rmFloatPoint, copy, toPercentage } from '../common-tool';
 import { SkillAttr, SkillTip } from 'src/app/data-source/skill/skill.component';
 import { getLifeStr, isStiff, getStiffIndex, doSkill, isDead, addCurrentRound, DefensesOperation } from './fight-common';
 
@@ -62,6 +62,17 @@ export class FightComponent implements OnInit {
         pet.MP = this.getAttrNum(pet, 'MP', levelProp);
         pet.power = this.getAttrNum(pet, 'power', levelProp);
         pet.defenses = this.getAttrNum(pet, 'defenses', levelProp);
+
+        for (const skill of pet.passiveSkills) {
+            for (const skillName in skill) {
+                if (!isEmpty(skill[skillName].efficiencyProp)) {
+                    skill[skillName].efficiency = rmFloatPoint(skill[skillName].efficiency + skill[skillName].efficiencyProp * pet.grade, 2);
+                }
+                if (!isEmpty(skill[skillName].probabilityProp)) {
+                    skill[skillName].probability = rmFloatPoint(skill[skillName].probability + skill[skillName].probabilityProp * pet.grade, 2);
+                }
+            }
+        }
     }
 
     getAttrNum(pet: pet, lowerStr: string, levelProp: LevelPropITFS[]): number {
@@ -154,7 +165,7 @@ export class FightComponent implements OnInit {
                 const seriousInjuryBuffIndex: number = pet_atta.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.seriousInjury));
                 let str: string = '';
                 if (seriousInjuryBuffIndex > -1) {
-                    str = `重伤效果，治疗效率降低 ${toPercentage(pet_atta.debuff[seriousInjuryBuffIndex].seriousInjury)}`;
+                    str = `重伤效果，治疗效率降低 ${toPercentage(pet_atta.debuff[seriousInjuryBuffIndex].seriousInjury)} `;
                     bloodSuckingNum = rmFloatPoint(bloodSuckingNum * pet_atta.debuff[seriousInjuryBuffIndex].seriousInjury);
                 }
                 this.bloodRecovery(pet_atta, bloodSuckingNum);
@@ -312,7 +323,7 @@ export class FightComponent implements OnInit {
         this.bloodLose(pet_beAtta, hurt);
         // this.createBloodTxt();
         // this.pet_my_span.nativeElement.append(-hurt);
-        console.log(`${pet_beAtta.name} ${defensesStr}${attackAbnormalStr}${reduceInjuryStr}${shieldStr}受到 ${hurt} 点HP伤害`);
+        console.log(`${pet_beAtta.name} ${attackAbnormalStr}${defensesStr}${reduceInjuryStr}${shieldStr}受到 ${hurt} 点HP伤害`);
         return hurt;
     }
 

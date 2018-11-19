@@ -1,5 +1,3 @@
-import { Buff } from "../pet/pet.component";
-
 /**
  * 技能属性
  */
@@ -74,17 +72,19 @@ export enum SkillTip {
 export class Bleeding {
     name: string = 'Bleeding';
     probability: number; // 流血几率 0.5表示50%的
-    efficiency: number; // 效率 0.5表示50%的伤害吸血
+    efficiency: number; // 效率 0.05表示每回合扣除最大生命值5%的生命值
     seriousInjury: number; // 重伤效果，0.5表示回血效果减半
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     roundNum: number; // 持续时间
     attackTime: AttackTime = AttackTime.afterAttack;
     skillType: SkillType = SkillType.DEBUFF;
     target: Target = Target.enemy;
     triggerRound: Target = Target.enemy; // 触发回合
-    tip: string = '流血效果，HP'
 
-    constructor(probability: number, efficiency: number, roundNum: number, seriousInjury: number) {
-        [this.probability, this.efficiency, this.roundNum, this.seriousInjury] = [probability, efficiency, roundNum, seriousInjury];
+    constructor(probability: number, efficiency: number, roundNum: number, seriousInjury: number = 0.5, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.roundNum, this.seriousInjury, this.probabilityProp, this.efficiencyProp] =
+            [probability, efficiency, roundNum, seriousInjury, probabilityProp, efficiencyProp];
     }
 }
 
@@ -95,13 +95,14 @@ export class BloodSucking {
     name: string = 'BloodSucking';
     probability: number; // 吸血几率 0.5表示50%
     efficiency: number; // 吸血效率 0.5表示50%的伤害吸血
+    efficiencyProp: number; // 每级提升吸血效率 0.1表示每级增加10%的吸血效率
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
     skillType: SkillType = SkillType.BUFF;
     target: Target = Target.self;
     triggerRound: Target = Target.self; // 触发回合
 
-    constructor(probability: number, efficiency: number) {
-        [this.probability, this.efficiency] = [probability, efficiency];
+    constructor(probability: number, efficiency: number, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.efficiencyProp] = [probability, efficiency, efficiencyProp];
     }
 }
 
@@ -112,14 +113,15 @@ export class RealAttack {
     name: string = 'RealAttack';
     probability: number;
     hurtNum: number; // 造成多少真实伤害
-    efficiency: number; // 伤害效率 0.5表示50%的伤害吸血
+    efficiency: number; // 伤害效率 0.5表示50%的护甲无视
+    efficiencyProp: number; // 每级增加多少点护甲无视
     InjuryStatus: InjuryStatus = InjuryStatus.beforeCount;
     skillType: SkillType = SkillType.DEBUFF;
     target: Target = Target.enemy;
     triggerRound: Target = Target.self; // 触发回合
 
-    constructor(probability: number, efficiency: number, hurtNum: number) {
-        [this.probability, this.efficiency, this.hurtNum] = [probability, efficiency, hurtNum];
+    constructor(probability: number, efficiency: number, hurtNum: number, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.hurtNum, this.efficiencyProp] = [probability, efficiency, hurtNum, efficiencyProp];
     }
 }
 
@@ -131,11 +133,14 @@ export class ViolentAttack {
     probability: number; // 暴击几率 0.5表示50%的暴击几率
     efficiency: number; // 暴击伤害 2表示200%
     increaseBleedingProbability: number; // 增加流血几率
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     InjuryStatus: InjuryStatus = InjuryStatus.beforeCount;
     AttackTime: AttackTime = AttackTime.toAttack;
 
-    constructor(probability: number, efficiency: number, increaseBleedingProbability: number) {
-        [this.probability, this.efficiency, this.increaseBleedingProbability] = [probability, efficiency, increaseBleedingProbability];
+    constructor(probability: number, efficiency: number, increaseBleedingProbability: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.increaseBleedingProbability, this.probabilityProp, this.efficiencyProp] = 
+        [probability, efficiency, increaseBleedingProbability, probabilityProp, efficiencyProp];
     }
 }
 
@@ -146,11 +151,13 @@ export class ReduceInjury {
     name: string = 'ReduceInjury';
     probability: number; // 减伤几率
     efficiency: number; // 减伤效率 0.5表示50%
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
     triggerRound: Target = Target.enemy; // 触发回合
 
-    constructor(probability: number, efficiency: number) {
-        [this.probability, this.efficiency] = [probability, efficiency];
+    constructor(probability: number, efficiency: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, probabilityProp, efficiencyProp];
     }
 }
 
@@ -160,12 +167,14 @@ export class ReduceInjury {
 export class ShieldFromAttack {
     name: string = 'ShieldFromAttack';
     probability: number;
-    efficiency: number; // 生成护盾效率 0.5表示50%的伤害吸血
+    efficiency: number; // 生成护盾效率 0.5表示50%
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
     triggerRound: Target = Target.self; // 触发回合
 
-    constructor(probability: number, efficiency: number) {
-        [this.probability, this.efficiency] = [probability, efficiency];
+    constructor(probability: number, efficiency: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, probabilityProp, efficiencyProp];
     }
 }
 
@@ -176,10 +185,11 @@ export class Stiff {
     name: string = 'Stiff';
     probability: number; // 僵硬几率
     roundNum: number; // 僵硬回合数
+    probabilityProp: number; // 每级提升触发几率
     triggerRound: Target = Target.self; // 触发回合
 
-    constructor(probability: number, roundNum: number) {
-        [this.probability, this.roundNum] = [probability, roundNum + 1];
+    constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
+        [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum + 1, probabilityProp];
     }
 }
 
@@ -190,11 +200,13 @@ export class ReducePower {
     name: string = 'ReducePower';
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     roundNum: number; // 持续时间
     triggerRound: Target = Target.self; // 触发回合
 
-    constructor(probability: number, efficiency: number, roundNum: number) {
-        [this.probability, this.efficiency, this.roundNum] = [probability, efficiency, roundNum];
+    constructor(probability: number, efficiency: number, roundNum: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.roundNum, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, roundNum, probabilityProp, efficiencyProp];
     }
 }
 
@@ -206,10 +218,12 @@ export class Dodge {
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
     removeDeBuff: boolean; // 是否移除debuff
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     triggerRound: Target = Target.enemy; // 触发回合
 
-    constructor(probability: number, efficiency: number, removeDeBuff: boolean = false) {
-        [this.probability, this.efficiency, this.removeDeBuff] = [probability, efficiency, removeDeBuff];
+    constructor(probability: number, efficiency: number, removeDeBuff: boolean = false, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.removeDeBuff, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, removeDeBuff, probabilityProp, efficiencyProp];
     }
 }
 
@@ -221,10 +235,12 @@ export class IncreasePower {
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
     roundNum: number; // 持续回合数
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     triggerRound: Target = Target.self; // 触发回合
 
-    constructor(probability: number, efficiency: number, roundNum: number) {
-        [this.probability, this.efficiency, this.roundNum] = [probability, efficiency, roundNum];
+    constructor(probability: number, efficiency: number, roundNum: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.roundNum, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, roundNum, probabilityProp, efficiencyProp];
     }
 }
 
@@ -234,10 +250,12 @@ export class IncreaseBlood {
     probability: number; // 触发几率 0.5表示50%的
     bloodCondition: number; // 0.3表示生命值低于30%
     efficiency: number; // 效率 0.5表示50%
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     triggerRound: Target = Target.enemy; // 触发回合
 
-    constructor(probability: number, efficiency: number, bloodCondition: number) {
-        [this.probability, this.efficiency, this.bloodCondition] = [probability, efficiency, bloodCondition];
+    constructor(probability: number, efficiency: number, bloodCondition: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.bloodCondition, this.probabilityProp, efficiencyProp] = [probability, efficiency, bloodCondition, probabilityProp, efficiencyProp];
     }
 }
 
@@ -246,19 +264,23 @@ export class AttackAbnormal {
     name: string = 'AttackAbnormal';
     probability: number; // 触发几率 0.5表示50%的
     efficiency: number; // 效率 0.5表示50%
+    probabilityProp: number; // 每级提升触发几率
+    efficiencyProp: number; // 每级提升效率
     abnormal: string;
 
-    constructor(probability: number, efficiency: number, abnormal: string) {
-        [this.probability, this.efficiency, this.abnormal] = [probability, efficiency, abnormal];
+    constructor(probability: number, efficiency: number, abnormal: string, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.abnormal, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, abnormal, probabilityProp, efficiencyProp];
     }
 }
 
+// 使敌人沉默，无法发动任何技能
 export class Ailent {
     name: string = 'Ailent';
     probability: number; // 触发几率 0.5表示50%的
     roundNum: number; // 持续回合数
+    probabilityProp: number; // 每级提升触发几率s
 
-    constructor(probability: number, roundNum: number) {
-        [this.probability, this.roundNum] = [probability, roundNum];
+    constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
+        [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum, probabilityProp];
     }
 }
