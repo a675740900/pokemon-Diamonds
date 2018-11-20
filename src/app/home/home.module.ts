@@ -7,7 +7,6 @@ import { MaterialModule } from '../component/material-module';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
-import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
     imports: [
@@ -17,11 +16,10 @@ import { BrowserModule } from '@angular/platform-browser';
         MatTableModule,
         BrowserAnimationsModule,
         MatInputModule,
-        BrowserModule
     ],
     declarations: [
         Page1Component,
-        ChooseInitPetComponent
+        ChooseInitPetComponent,
     ]
 })
 export class HomeModule { }

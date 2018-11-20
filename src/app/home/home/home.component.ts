@@ -5,6 +5,7 @@ import { SettingComponent } from '../setting/setting.component';
 import { petsITFS, FightComponent } from '../fight/fight.component';
 import { homeRouterAnimate } from '../../component/animations/router.animate';
 import { PageRouterParam } from './home-common';
+import { IntroduceComponent } from '../introduce/introduce.component';
 
 @Component({
     selector: 'app-home',
@@ -91,4 +92,9 @@ export class HomeComponent implements OnInit {
     ngOnInit() {
     }
 
+    introduce() {
+        const dialogRef = this.dialog.open(IntroduceComponent, {
+            width: '900px', height: '500px'
+        });
+    }
 }

@@ -6,9 +6,12 @@ import { AppComponent } from './app.component';
 import { FightComponent } from './home/fight/fight.component';
 import { SettingComponent } from './home/setting/setting.component';
 import { MaterialModule } from './component/material-module';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home/home.component';
 import { HomeModule } from './home/home.module';
+import { IntroduceComponent } from './home/introduce/introduce.component';
+import { MenuIntroduceComponent } from './component/menu-introduce.component';
+import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
     declarations: [
@@ -16,18 +19,27 @@ import { HomeModule } from './home/home.module';
         FightComponent,
         SettingComponent,
         HomeComponent,
+        IntroduceComponent,
+        MenuIntroduceComponent
     ],
     imports: [
         AppRoutingModule,
         FormsModule,
+        ReactiveFormsModule,
         HomeModule,
         MaterialModule,
+        BrowserModule
+    ],
+    exports: [
+        MenuIntroduceComponent,
     ],
     providers: [],
     bootstrap: [AppComponent],
     entryComponents: [
         SettingComponent,
-        FightComponent
+        FightComponent,
+        IntroduceComponent,
+        MenuIntroduceComponent
     ]
 })
 export class AppModule { }
