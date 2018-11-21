@@ -7,6 +7,7 @@ import { MaterialModule } from '../component/material-module';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
+import { ExperienceComponent } from './experience/experience.component';
 
 @NgModule({
     imports: [
@@ -20,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
     declarations: [
         Page1Component,
         ChooseInitPetComponent,
+        ExperienceComponent,
     ]
 })
 export class HomeModule { }
