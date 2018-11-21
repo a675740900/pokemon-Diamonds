@@ -3,14 +3,24 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+/* 居中 */
 .center {
     margin: 0 auto;
 }
 
+/* 文字居中 */
 .center-text {
     text-align:center;
 }
 
+/* 总背景 */
 .background {
     background-image: url('./assets/image/background.jpg')
+}
+
+/* buff图标 */
+.imgBuff {
+    width: 20px;
+    height: 20px;
+    padding-left: 5px;
 }

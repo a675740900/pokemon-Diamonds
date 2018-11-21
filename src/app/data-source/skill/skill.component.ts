@@ -11,7 +11,8 @@ export class SkillAttr {
     ReduceInjury?: ReduceInjury; // 减伤
     ShieldFromAttack?: ShieldFromAttack; // 护盾
     Stiff_Twining?: Stiff_Twining; // 缠绕僵硬
-    Stiff_Stone?: Stiff_Stone; // 缠绕僵硬
+    Stiff_Stone?: Stiff_Stone; // 石化僵硬
+    Stiff_Frozen?: Stiff_Frozen; // 冰冻僵硬
     Ailent?: Ailent; // 沉默
     ReducePower?: ReducePower; // 减少攻击力
     Dodge?: Dodge; // 闪避
@@ -37,6 +38,11 @@ export enum AttackTime {
 export enum InjuryStatus {
     beforeCount = -1, // 伤害折算前
     afterCount = 1, // 伤害折算后
+}
+
+// 无限回合
+export enum InfiniteRound {
+    infinite = 99
 }
 
 /**
@@ -195,13 +201,26 @@ export class Stiff_Twining {
     }
 }
 
-
 /**
  * 使敌人石化僵硬
  */
 export class Stiff_Stone {
     name: string = 'Stiff_Stone';
     probability: number; // 石化几率
+    roundNum: number; // 僵硬回合数
+    probabilityProp: number; // 每级提升触发几率
+    triggerRound: Target = Target.self; // 触发回合
+
+    constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
+        [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum + 1, probabilityProp];
+    }
+}
+/**
+ * 使敌人冰冻僵硬
+ */
+export class Stiff_Frozen {
+    name: string = 'Stiff_Frozen';
+    probability: number; // 冰冻几率
     roundNum: number; // 僵硬回合数
     probabilityProp: number; // 每级提升触发几率
     triggerRound: Target = Target.self; // 触发回合

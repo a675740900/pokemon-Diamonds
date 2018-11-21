@@ -10,7 +10,7 @@ import { IntroduceList } from './comp-common';
             <mat-expansion-panel-header>
                 <mat-panel-title>
                 {{introduce.title}}
-                <img class='img' src="{{introduce.url}}" [hidden]='!introduce.url'>
+                <img class='imgBuff' src="{{introduce.url}}" [hidden]='!introduce.url'>
                 </mat-panel-title>
                 <mat-panel-description>
                     {{introduce.description}}
@@ -22,7 +22,7 @@ import { IntroduceList } from './comp-common';
     </mat-accordion>
   `,
     styles: [`
-    .img {
+    .imgBuff {
         width: 20px;
         height: 20px;
         padding-left: 5px;

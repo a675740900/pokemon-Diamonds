@@ -2,10 +2,11 @@ import { Component, OnInit, HostBinding } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
-import { petsITFS, FightComponent } from '../fight/fight.component';
+import { FightComponent } from '../fight/fight.component';
 import { homeRouterAnimate } from '../../component/animations/router.animate';
 import { PageRouterParam } from './home-common';
 import { IntroduceComponent } from '../introduce/introduce.component';
+import { petsITFS } from '../fight/fight-common';
 
 @Component({
     selector: 'app-home',
@@ -94,7 +95,7 @@ export class HomeComponent implements OnInit {
 
     introduce() {
         const dialogRef = this.dialog.open(IntroduceComponent, {
-            width: '900px', height: '500px'
+            width: '900px', height: '600px'
         });
     }
 }

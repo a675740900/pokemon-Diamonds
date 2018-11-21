@@ -2,20 +2,9 @@ import { Component, OnInit, Inject, ViewChild, Renderer2, ElementRef } from '@an
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
 import { getPet, pet, Buff, getLevelProp, LevelPropITFS } from '../../data-source/pet/pet.component';
-import { isEmpty, rmFloatPoint, copy, toPercentage } from '../common-tool';
+import { isEmpty, rmFloatPoint, copy, toPercentage, getIcon, icon_Url } from '../common-tool';
 import { SkillAttr, SkillTip } from 'src/app/data-source/skill/skill.component';
-import { getLifeStr, isStiff, getStiffIndex, doSkill, isDead, addCurrentRound, DefensesOperation } from './fight-common';
-
-export interface petsITFS {
-    petInfo_my: petInfo;
-    petInfo_Enemy: petInfo;
-}
-
-export interface petInfo {
-    petguid: number;
-    level: number;
-    grade: number;
-}
+import { getLifeStr, isStiff, getStiffIndex, doSkill, isDead, addCurrentRound, DefensesOperation, petsITFS, petInfo, petBuffIcon, getIconIndex, isImmune, PetDataITFS, PetDatasITFS } from './fight-common';
 
 @Component({
     selector: 'app-fight',
@@ -25,7 +14,8 @@ export interface petInfo {
 export class FightComponent implements OnInit {
     pet_my: pet;
     pet_Enemy: pet;
-    current_roundNum: number = 1;
+    current_roundNum: number = 1; // 当前回合数
+
     @ViewChild('pet_my_span') pet_my_span: ElementRef;
 
     constructor(
@@ -41,8 +31,8 @@ export class FightComponent implements OnInit {
         this.setGrade(this.pet_Enemy);
 
         this.checkRestraint(this.pet_my, this.pet_Enemy);
-        this.pet_my.isRound = true;
-        this.pet_Enemy.isRound = false;
+        this.pet_my.petData.isRound = true;
+        this.pet_Enemy.petData.isRound = false;
     }
 
     ngOnInit() {
@@ -51,11 +41,13 @@ export class FightComponent implements OnInit {
         console.log(this.pet_Enemy);
     }
 
+    // 设置宠物等级、阶级
     reSetPet(pet: pet, petInfo: petInfo) {
         pet.grade = petInfo.grade;
         pet.level = petInfo.level;
     }
 
+    // 相对应等级阶级提升属性值
     setGrade(pet: pet) {
         const levelProp: LevelPropITFS[] = getLevelProp();
         pet.current_HP = pet.HP = this.getAttrNum(pet, 'HP', levelProp);
@@ -75,10 +67,12 @@ export class FightComponent implements OnInit {
         }
     }
 
+    // 技能触发几率、效率计算公式
     getAttrNum(pet: pet, lowerStr: string, levelProp: LevelPropITFS[]): number {
         return rmFloatPoint((pet[lowerStr] + pet[`${lowerStr}Prop`] * (pet.grade - 1)) * (1 + levelProp[pet.level][`${lowerStr}Prop`]));
     }
 
+    // 检查两只宠物克制关系
     checkRestraint(pet1: pet, pet2: pet) {
         const restraintNum: number = Math.abs(pet1.pettype - pet2.pettype);
         if (restraintNum == 1 || restraintNum == 4) {
@@ -108,6 +102,7 @@ export class FightComponent implements OnInit {
         }
     }
 
+    // 我方宠物冲击
     attack_click() {
         this.attack(this.pet_my, this.pet_Enemy);
     }
@@ -136,6 +131,7 @@ export class FightComponent implements OnInit {
 
         console.log(`${pet_atta.name} 发动攻击 ${violentAttackStr}${hurt}`);
 
+        // 沉默
         doSkill(pet_atta, 'Ailent', (skill: SkillAttr) => {
             pet_beAtta.debuff.push({
                 Ailent: true,
@@ -179,6 +175,9 @@ export class FightComponent implements OnInit {
             // 石化僵硬
             doSkill(pet_atta, 'Stiff_Stone', (skill: SkillAttr) => {
                 console.log(`${pet_beAtta.name} ${skill.skillTip}，无法动弹`);
+
+                if (isImmune(pet_beAtta, skill)) return;
+
                 pet_beAtta.debuff.push({
                     Stiff_Stone: true,
                     roundNum: skill.Stiff_Stone.roundNum,
@@ -187,11 +186,11 @@ export class FightComponent implements OnInit {
             })
 
             // 僵硬
-            doSkill(pet_atta, 'Stiff_Tiwing', (skill: SkillAttr) => {
+            doSkill(pet_atta, 'Stiff_Twining', (skill: SkillAttr) => {
                 console.log(`${pet_beAtta.name} ${skill.skillTip}，无法动弹`);
                 pet_beAtta.debuff.push({
-                    Stiff_Tiwing: true,
-                    roundNum: skill.Stiff_Stone.roundNum,
+                    Stiff_Twining: true,
+                    roundNum: skill.Stiff_Twining.roundNum,
                     currentRound: 0
                 })
             })
@@ -199,15 +198,9 @@ export class FightComponent implements OnInit {
             // 流血
             doSkill(pet_atta, 'Bleeding', (skill: SkillAttr) => { // 流血计算
                 console.log(`${pet_beAtta.name} 进入${skill.skillTip}状态`);
-                let isImmune: boolean = false; // 是否被免疫
-                // 免疫
-                doSkill(pet_beAtta, 'ImmuneSkill', (skill2: SkillAttr) => {
-                    if (skill2.ImmuneSkill.immuneSkill.includes(skill.Bleeding.name)) {
-                        isImmune = true;
-                        console.log(`${pet_beAtta.name} 免疫 ${skill.skillTip}`);
-                    }
-                })
-                if (isImmune) return;
+
+                if (isImmune(pet_beAtta, skill)) return;
+
                 const bleedingNum = rmFloatPoint(pet_beAtta.HP * skill.Bleeding.efficiency);
                 if (skill.skillTip == SkillTip.BLEEDING) {
                     pet_beAtta.debuff.push({
@@ -262,17 +255,20 @@ export class FightComponent implements OnInit {
             })
         }
 
-        this.afterAttack(pet_beAtta);
-        this.afterAttack(pet_atta);
-        if (isDead(pet_beAtta)) {
-            return;
-        }
-        console.log(getLifeStr(pet_atta));
-        console.log(getLifeStr(pet_beAtta));
-
-        this.setRound(pet_atta, pet_beAtta);
+        setTimeout(() => {
+            this.afterAttack(pet_beAtta);
+            this.afterAttack(pet_atta);
+            if (isDead(pet_beAtta)) {
+                return;
+            }
+            console.log(getLifeStr(pet_atta));
+            console.log(getLifeStr(pet_beAtta));
+    
+            this.setRound(pet_atta, pet_beAtta);
+        }, 300);
     }
 
+    // 治疗时计算是否重伤
     getBloodFromSeriousInjury(pet: pet, cure: number): any {
         let obj: any = {};
         const debuff: Buff = pet.debuff.find((debuff: Buff) => !isEmpty(debuff.SeriousInjury) && debuff.SeriousInjury > 0);
@@ -284,6 +280,7 @@ export class FightComponent implements OnInit {
         return obj;
     }
 
+    // 增加血量
     bloodRecovery(pet: pet, blood: number) {
         const HP: number = rmFloatPoint(pet.current_HP + blood);
         if (HP <= pet.HP) {
@@ -291,6 +288,7 @@ export class FightComponent implements OnInit {
         }
     }
 
+    // 减少血量
     bloodLose(pet: pet, blood: number) {
         const HP: number = rmFloatPoint(pet.current_HP - blood);
         if (HP < 0) {
@@ -342,6 +340,7 @@ export class FightComponent implements OnInit {
         this.bloodLose(pet_beAtta, hurt);
         // this.createBloodTxt();
         // this.pet_my_span.nativeElement.append(-hurt);
+        pet_atta.petData.isAttack = true;
         console.log(`${pet_beAtta.name} ${attackAbnormalStr}${defensesStr}${reduceInjuryStr}${shieldStr}受到 ${hurt} 点HP伤害`);
         return hurt;
     }
@@ -369,32 +368,34 @@ export class FightComponent implements OnInit {
         }
 
         // 若跳过的是自己的回合，则敌人自动攻击（因为敌人没有按钮）
-        if (this.pet_Enemy.isRound) {
+        if (this.pet_Enemy.petData.isRound) {
             setTimeout(() => {
                 this.attack(this.pet_Enemy, this.pet_my);
-            }, 0);
+            }, 500);
         }
         this.current_roundNum++;
     }
 
+    // 改变回合次
     changeRound(pet_atta: pet, pet_beAtta: pet) {
-        pet_atta.isRound = !pet_atta.isRound;
-        pet_beAtta.isRound = !pet_beAtta.isRound;
+        pet_atta.petData.isAttack = false;
+        pet_atta.petData.isRound = !pet_atta.petData.isRound;
+        pet_beAtta.petData.isRound = !pet_beAtta.petData.isRound;
     }
 
     // 检查buff效果
     afterAttack(pet: pet) {
-        if (pet.isRound) { // 在自己回合添加回合数
+        if (pet.petData.isRound) { // 在自己回合添加回合数
             addCurrentRound(pet, 'buff', 'IncreasePower');
             addCurrentRound(pet, 'debuff', 'Ailent');
             addCurrentRound(pet, 'debuff', 'ReducePower');
             addCurrentRound(pet, 'debuff', 'SeriousInjury');
         } else {
             addCurrentRound(pet, 'debuff', 'Stiff_Stone');
-            addCurrentRound(pet, 'debuff', 'Stiff_Tiwing');
+            addCurrentRound(pet, 'debuff', 'Stiff_Twining');
         }
         for (const debuff of pet.debuff) {
-            if (pet.isRound) {
+            if (pet.petData.isRound) {
 
             } else {
                 if (!isEmpty(debuff.Bleeding)) {
@@ -424,6 +425,7 @@ export class FightComponent implements OnInit {
                 pet.debuff.splice(i--, 1);
             }
         }
+        this.buffIconRefresh(pet);
     }
 
     // 获取当前攻击的攻击力
@@ -448,6 +450,27 @@ export class FightComponent implements OnInit {
             }
         }
         return power;
+    }
+
+    // buff图标刷新
+    buffIconRefresh(pet: pet) {
+        pet.buffIcon.splice(0, pet.buffIcon.length);
+        for (const key of ['buff','debuff']) {
+            for (const buff of pet[key]) {
+                for (const buffName in buff) {
+                    const iconIndex: number = getIconIndex(buffName, pet.buffIcon);
+                    if (iconIndex > -1) {
+                        pet.buffIcon[iconIndex].num++;
+                    } else {
+                        const iconInfo: icon_Url = getIcon(buffName);
+                        if (isEmpty(iconInfo)) continue;
+                        pet.buffIcon.push(
+                            new petBuffIcon(iconInfo.url, iconInfo.namezh)
+                        )
+                    }
+                }
+            }
+        }
     }
 
     createBloodTxt() {

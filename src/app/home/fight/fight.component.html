@@ -3,12 +3,17 @@
 
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
-        <span style="margin-bottom: 20%; margin-right: 2%;">HP</span>
+
         <div class='progressBar'>
+            <span>Lv.{{pet_Enemy.grade}} {{pet_Enemy.name}}</span>
+            <span style="margin-bottom: 20%; margin-right: 2%;">HP</span>
             <span class='blood-font'>{{pet_Enemy.current_HP}}/{{pet_Enemy.HP}}</span>
             <mat-progress-bar color='warn' mode="buffer" [value]="(pet_Enemy.current_HP/pet_Enemy.HP)*100"
                 [bufferValue]='((pet_Enemy.shield+pet_Enemy.current_HP)/pet_Enemy.HP)*100'></mat-progress-bar>
-            Lv.{{pet_Enemy.grade}} {{pet_Enemy.name}}
+
+            <div class='imgBuff_fight'>
+                <img class='imgBuff' [matTooltip]='iconInfo.name' matTooltipPosition='above' *ngFor='let iconInfo of pet_Enemy.buffIcon' src="{{iconInfo.url}}">
+            </div>
         </div>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
@@ -16,27 +21,16 @@
             <span>Lv.{{pet_my.grade}} {{pet_my.name}}</span>
             <span style="margin-bottom: 20%; margin-right: 2%;">HP</span>
             <span class='blood-font'>{{pet_my.current_HP}}/{{pet_my.HP}}</span>
+            <!-- <span style="margin-bottom: 20%; margin-right: 2%;">力量</span>
+            <span class='blood-font'>{{pet_my.power}}</span> -->
             <mat-progress-bar color='warn' mode="buffer" [value]="(pet_my.current_HP/pet_my.HP)*100" [bufferValue]='((pet_my.shield+pet_my.current_HP)/pet_my.HP)*100'></mat-progress-bar>
-            <!-- <div #pet_my_span></div> -->
-            <div>
-                <img src="assets/image/petBuff/frozen.png">
+            <div class='imgBuff_fight'>
+                <img class='imgBuff' [matTooltip]='iconInfo.name' matTooltipPosition='above' *ngFor='let iconInfo of pet_my.buffIcon' src="{{iconInfo.url}}">
             </div>
         </div>
-
-
-        <!-- <span style="margin-bottom: 20%; margin-right: 2%;">MP</span>
-        <div class='progressBar2'>
-            {{pet_my.MP}}
-        </div> -->
-        <span style="margin-bottom: 20%; margin-right: 2%;">力量</span>
-        <div class='progressBar2'>
-            {{pet_my.power}}
-        </div>
-
-        
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
-        <button mat-raised-button color="warn" [disabled]='!pet_my.isRound' (click)='attack_click()'>攻击</button>
+        <button mat-raised-button color="warn" [disabled]='!pet_my.petData.isRound || pet_my.petData.isAttack' (click)='attack_click()'>攻击</button>
     </mat-grid-tile>
     <!-- <mat-grid-tile *ngFor="let tile of tiles" [colspan]="tile.cols" [rowspan]="tile.rows" [style.background]="tile.color">
         {{tile.text}}

@@ -1,6 +1,7 @@
 import { SkillAttr, ReduceInjury, BloodSucking, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Ailent, ImmuneSkill, Stiff_Stone, Stiff_Twining } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
 import { copy, rmFloatPoint, toPercentage } from "../../home/common-tool";
+import { petBuffIcon, PetDataITFS } from "../../home/fight/fight-common";
 
 export const petList_plant: number[] = [1];
 export const petList_beast: number[] = [2];
@@ -40,8 +41,10 @@ export class Buff {
     Bleeding?: number; // 流血
     Poisoning?: number; // 中毒
     SeriousInjury?: number; // 是否重伤
-    Stiff_Tiwing?: boolean; // 是否僵硬
-    Stiff_Stone?: boolean; // 是否僵硬
+    Stiff_Twining?: boolean; // 是否被缠绕
+    Stiff_Stone?: boolean; // 是否石化
+    Stiff_Frozen?: boolean; // 是否被冰冻
+    Stiff_Sleep?: boolean; // 是否睡眠
     Ailent?: boolean; // 是否沉默
     ReducePower?: number; // 减少攻击力
     IncreasePower?: number; // 增加攻击力
@@ -67,7 +70,6 @@ export class pet {
     maxGrade: number = 60;
     defenses: number; // 防御力
     pettype: PetType; // 属性
-    isRound?: boolean; // 当前是否为自己回合
     passiveSkills: SkillAttr[] = []; // 被动技能
     activeSkill: SkillAttr[] = []; // 主动技能
     petInstructions: Array<{ memo: string }>; // 技能说明
@@ -75,6 +77,8 @@ export class pet {
     exp: number = 0; // 当前经验值
     buff: Buff[] = [];
     debuff: Buff[] = [];
+    buffIcon: petBuffIcon[] = []; // buff图标
+    petData: PetDataITFS = {}; // 数据信息
 }
 
 export class LevelPropITFS {
