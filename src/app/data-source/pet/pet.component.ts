@@ -1,4 +1,4 @@
-import { SkillAttr, ReduceInjury, BloodSucking, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Ailent, ImmuneSkill, Stiff_Stone, Stiff_Twining } from "../skill/skill.component";
+import { SkillAttr, ReduceInjury, BloodSucking, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Ailent, ImmuneSkill, Stiff_Stone, Stiff_Twining, InfiniteRound } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
 import { copy, rmFloatPoint, toPercentage } from "../../home/common-tool";
 import { petBuffIcon, PetDataITFS } from "../../home/fight/fight-common";
@@ -62,12 +62,13 @@ export class pet {
     shield: number = 0; // 护盾
     power: number; // 力量（攻击力）
     level: number = 1; // 阶级
-    HPProp: number;
+    EXP: number; // 升级所需经验
+    currentEXP: number = 0; // 当前经验
+    HPProp: number; // 每级提升HP
     MPProp: number;
     powerProp: number;
     defensesProp: number;
     maxLevel: number;
-    maxGrade: number = 60;
     defenses: number; // 防御力
     pettype: PetType; // 属性
     passiveSkills: SkillAttr[] = []; // 被动技能
@@ -186,10 +187,10 @@ export class CupricSnake extends pet {
     pettype: PetType = PetType.METAL;
 
     passiveSkills: SkillAttr[] = [
-        { ReduceInjury: new ReduceInjury(1, 0.10, 0.1 / petInfo.maxGrade), level: 1, skillTip: SkillTip.BODYHARD },
-        { ImmuneSkill: new ImmuneSkill(1, 0, ['Bleeding', 'Stiff_Stone']), level: 1 },
+        { ReduceInjury: new ReduceInjury(1, 0.1, InfiniteRound.infinite, 0.1 / petInfo.maxGrade), level: 1, skillTip: SkillTip.BODYHARD },
+        { ImmuneSkill: new ImmuneSkill(1, ['Bleeding', 'Stiff_Stone'], InfiniteRound.infinite), level: 1 },
         { Stiff_Stone: new Stiff_Stone(0.1, 1), level: 2, skillTip: SkillTip.PETRIFACTION },
-        { AttackAbnormal: new AttackAbnormal(1, 0.5, 'Stiff_Stone'), level: 2, skillTip: SkillTip.PETRIFACTION },
+        { AttackAbnormal: new AttackAbnormal(1, 0.5, 'Stiff_Stone', InfiniteRound.infinite), level: 2, skillTip: SkillTip.PETRIFACTION },
     ];
 
     petInstructions: any[] = [
@@ -249,7 +250,7 @@ export class Sparrow extends pet {
 
     passiveSkills: SkillAttr[] = [
         { Dodge: new Dodge(0.1, 1, false, 0.1 / petInfo.maxGrade), level: 1, skillTip: SkillTip.FLYINGFAST },
-        { IncreasePower: new IncreasePower(1, 0.2, 1, 0.1 / petInfo.maxGrade), level: 1 },
+        { IncreasePower: new IncreasePower(1, 0.2, InfiniteRound.infinite, 0.1 / petInfo.maxGrade), level: 1 },
     ];
 
     petInstructions: any[] = [

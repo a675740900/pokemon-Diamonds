@@ -159,13 +159,14 @@ export class ReduceInjury {
     name: string = 'ReduceInjury';
     probability: number; // 减伤几率
     efficiency: number; // 减伤效率 0.5表示50%
+    roundNum: number;
     probabilityProp: number; // 每级提升触发几率
     efficiencyProp: number; // 每级提升效率
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
     triggerRound: Target = Target.enemy; // 触发回合
 
-    constructor(probability: number, efficiency: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
-        [this.probability, this.efficiency, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, probabilityProp, efficiencyProp];
+    constructor(probability: number, efficiency: number, roundNum: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.roundNum, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, roundNum, probabilityProp, efficiencyProp];
     }
 }
 
@@ -304,9 +305,10 @@ export class AttackAbnormal {
     probabilityProp: number; // 每级提升触发几率
     efficiencyProp: number; // 每级提升效率
     abnormal: string;
+    roundNum: number;
 
-    constructor(probability: number, efficiency: number, abnormal: string, probabilityProp: number = 0, efficiencyProp: number = 0) {
-        [this.probability, this.efficiency, this.abnormal, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, abnormal, probabilityProp, efficiencyProp];
+    constructor(probability: number, efficiency: number, abnormal: string, roundNum: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
+        [this.probability, this.efficiency, this.abnormal, this.roundNum, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, abnormal, roundNum, probabilityProp, efficiencyProp];
     }
 }
 
@@ -328,8 +330,9 @@ export class ImmuneSkill {
     probability: number; // 触发几率 0.5表示50%的
     probabilityProp: number; // 每级提升触发几率
     immuneSkill: string[];
+    roundNum: number;
 
-    constructor(probability: number, probabilityProp: number = 0, immuneSkill: string[]) {
-        [this.probability, this.probabilityProp, this.immuneSkill] = [probability, probabilityProp, immuneSkill];
+    constructor(probability: number, immuneSkill: string[], roundNum: number, probabilityProp: number = 0) {
+        [this.probability, this.roundNum, this.immuneSkill, this.probabilityProp] = [probability, roundNum, immuneSkill, probabilityProp];
     }
 }
