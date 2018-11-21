@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, ViewChild, Renderer2, ElementRef } from '@an
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
 import { getPet, pet, Buff, getLevelProp, LevelPropITFS } from '../../data-source/pet/pet.component';
-import { isEmpty, rmFloatPoint, copy, toPercentage, getIcon, icon_Url } from '../common-tool';
+import { isEmpty, rmFloatPoint, copy, toPercentage, getIcon, getNameZh } from '../common-tool';
 import { SkillAttr, SkillTip } from 'src/app/data-source/skill/skill.component';
 import { getLifeStr, isStiff, getStiffIndex, doSkill, isDead, addCurrentRound, DefensesOperation, petsITFS, petInfo, petBuffIcon, getIconIndex, isImmune, PetDataITFS, PetDatasITFS } from './fight-common';
 
@@ -462,10 +462,8 @@ export class FightComponent implements OnInit {
                     if (iconIndex > -1) {
                         pet.buffIcon[iconIndex].num++;
                     } else {
-                        const iconInfo: icon_Url = getIcon(buffName);
-                        if (isEmpty(iconInfo)) continue;
                         pet.buffIcon.push(
-                            new petBuffIcon(iconInfo.url, iconInfo.namezh)
+                            new petBuffIcon(getIcon(buffName), getNameZh(buffName))
                         )
                     }
                 }
