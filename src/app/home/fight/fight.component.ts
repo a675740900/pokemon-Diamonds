@@ -505,7 +505,7 @@ export class FightComponent implements OnInit {
                     pet.buffIcon[iconIndex].num++;
                 } else {
                     pet.buffIcon.push(
-                        new petBuffIcon(getIcon(buff.name), `${getNameZh(buff.name)} ${buff.memo}`)
+                        new petBuffIcon(getIcon(buff.name), `${getNameZh(buff.name)} ${this.getBuffNumMemo(buff)}`)
                     )
                 }
             }
@@ -513,17 +513,27 @@ export class FightComponent implements OnInit {
     }
 
     getBuffNumMemo(buff: Buff) {
-        let memo: string;
+        let memo: string = '';
         switch (buff.name) {
             case 'ImmuneSkill':
-                let immuneSkill_copy: string[] = copy(buff[name]);
+                let immuneSkill_copy: string[] = copy(buff[buff.name]);
                 for (const index in immuneSkill_copy) {
                     immuneSkill_copy[index] = getNameZh(immuneSkill_copy[index]);
                 }
                 memo = immuneSkill_copy.join('、');
                 break;
             case 'IncreasePower':
-                memo = toPercentage(buff[buff.name]);
+            case 'SeriousInjury':
+                memo += '治疗效果降低 ';
+            case 'AttackAbnormal':
+                memo += '（石化），伤害增加 '
+                memo += toPercentage(buff[buff.name]);
+                break;
+            case 'Bleeding':
+                memo += '每回合失血 ';
+                memo += buff[buff.name];
+                break;
+            case 'Silent':
                 break;
             default:
                 memo = toPercentage(buff[buff.name]);
