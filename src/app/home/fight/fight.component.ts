@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
 import { getPet, pet, Buff, getLevelProp, LevelPropITFS } from '../../data-source/pet/pet.component';
 import { isEmpty, rmFloatPoint, copy, toPercentage, getIcon, getNameZh } from '../common-tool';
-import { SkillAttr, SkillTip } from 'src/app/data-source/skill/skill.component';
+import { SkillAttr, SkillTip, InfiniteRound } from 'src/app/data-source/skill/skill.component';
 import { getLifeStr, isStiff, getStiffIndex, doSkill, isDead, addCurrentRound, DefensesOperation, petsITFS, petInfo, petBuffIcon, getIconIndex, isImmune, PetDataITFS, PetDatasITFS } from './fight-common';
 
 @Component({
@@ -26,11 +26,11 @@ export class FightComponent implements OnInit {
 
         this.reSetPet(this.pet_my, data.petInfo_my);
         this.reSetPet(this.pet_Enemy, data.petInfo_Enemy);
+        this.checkRestraint(this.pet_my, this.pet_Enemy);
 
         this.setGrade(this.pet_my);
         this.setGrade(this.pet_Enemy);
 
-        this.checkRestraint(this.pet_my, this.pet_Enemy);
         this.pet_my.petData.isRound = true;
         this.pet_Enemy.petData.isRound = false;
     }
@@ -65,11 +65,38 @@ export class FightComponent implements OnInit {
                 }
             }
         }
+        this.setBuff(pet);
     }
 
     // 技能触发几率、效率计算公式
     getAttrNum(pet: pet, lowerStr: string, levelProp: LevelPropITFS[]): number {
         return rmFloatPoint((pet[lowerStr] + pet[`${lowerStr}Prop`] * (pet.grade - 1)) * (1 + levelProp[pet.level][`${lowerStr}Prop`]));
+    }
+
+    // 设置初始buff，一些百分百触发的buff
+    setBuff(pet: pet) {
+        for (const skill of pet.passiveSkills) {
+            for (const skillName in skill) {
+                if (!isEmpty(skill[skillName].roundNum)) {
+                    if (skill[skillName].roundNum == InfiniteRound.infinite) {
+                        let buff: Buff = {
+                            name: skillName,
+                            [skillName]: skill[skillName].efficiency,
+                            roundNum: skill[skillName].roundNum,
+                            currentRound: 0
+                        }
+                        switch (skillName) {
+                            case 'ImmuneSkill':
+                                buff[skillName] = skill[skillName].immuneSkill;
+                                break;
+                        }
+                        pet[skill[skillName].skillType].push(buff)
+                        break;
+                    }
+                }
+            }
+        }
+        this.buffIconRefresh(pet);
     }
 
     // 检查两只宠物克制关系
@@ -78,24 +105,28 @@ export class FightComponent implements OnInit {
         if (restraintNum == 1 || restraintNum == 4) {
             if ((pet1.pettype > pet2.pettype && pet2.pettype != 0) || (restraintNum == 4 && pet1.pettype == 0)) {
                 pet1.buff.push({
+                    name: 'IncreasePower',
                     IncreasePower: 0.2,
-                    roundNum: 99,
+                    roundNum: InfiniteRound.infinite,
                     currentRound: 0
                 })
                 pet2.debuff.push({
+                    name: 'ReducePower',
                     ReducePower: 0.2,
-                    roundNum: 99,
+                    roundNum: InfiniteRound.infinite,
                     currentRound: 0
                 })
             } else {
                 pet2.buff.push({
+                    name: 'IncreasePower',
                     IncreasePower: 0.2,
-                    roundNum: 99,
+                    roundNum: InfiniteRound.infinite,
                     currentRound: 0
                 })
                 pet1.debuff.push({
+                    name: 'ReducePower',
                     ReducePower: 0.2,
-                    roundNum: 99,
+                    roundNum: InfiniteRound.infinite,
                     currentRound: 0
                 })
             }
@@ -123,6 +154,7 @@ export class FightComponent implements OnInit {
             hurt = rmFloatPoint(power * (1 + skill.ViolentAttack.efficiency)); // 攻击力✖️暴击伤害
             violentAttackStr = `暴击！ `;
             pet_atta.buff.push({
+                name: 'IncreaseBleedingProbability',
                 IncreaseBleedingProbability: skill.ViolentAttack.IncreaseBleedingProbability,
                 roundNum: 1,
                 currentRound: 1
@@ -132,10 +164,12 @@ export class FightComponent implements OnInit {
         console.log(`${pet_atta.name} 发动攻击 ${violentAttackStr}${hurt}`);
 
         // 沉默
-        doSkill(pet_atta, 'Ailent', (skill: SkillAttr) => {
+        doSkill(pet_atta, 'Silent', (skill: SkillAttr) => {
+            if (skill.Silent.roundNum == InfiniteRound.infinite) return;
             pet_beAtta.debuff.push({
-                Ailent: true,
-                roundNum: skill.Ailent.roundNum,
+                name: 'Silent',
+                Silent: true,
+                roundNum: skill.Silent.roundNum,
                 currentRound: 0
             })
             console.log(`${pet_beAtta.name} ${skill.skillTip}`);
@@ -179,6 +213,7 @@ export class FightComponent implements OnInit {
                 if (isImmune(pet_beAtta, skill)) return;
 
                 pet_beAtta.debuff.push({
+                    name: 'Stiff_Stone',
                     Stiff_Stone: true,
                     roundNum: skill.Stiff_Stone.roundNum,
                     currentRound: 0
@@ -189,6 +224,7 @@ export class FightComponent implements OnInit {
             doSkill(pet_atta, 'Stiff_Twining', (skill: SkillAttr) => {
                 console.log(`${pet_beAtta.name} ${skill.skillTip}，无法动弹`);
                 pet_beAtta.debuff.push({
+                    name: 'Stiff_Twining',
                     Stiff_Twining: true,
                     roundNum: skill.Stiff_Twining.roundNum,
                     currentRound: 0
@@ -204,16 +240,19 @@ export class FightComponent implements OnInit {
                 const bleedingNum = rmFloatPoint(pet_beAtta.HP * skill.Bleeding.efficiency);
                 if (skill.skillTip == SkillTip.BLEEDING) {
                     pet_beAtta.debuff.push({
+                        name: 'Bleeding',
                         Bleeding: bleedingNum,
                         roundNum: skill.Bleeding.roundNum,
                         currentRound: 0,
                     }, {
+                            name: 'SeriousInjury',
                             SeriousInjury: skill.Bleeding.SeriousInjury,
                             roundNum: skill.Bleeding.roundNum,
                             currentRound: 0,
                         })
                 } else if (skill.skillTip === SkillTip.POISONING) {
                     pet_beAtta.debuff.push({
+                        name: 'Poisoning',
                         Poisoning: bleedingNum,
                         roundNum: skill.Bleeding.roundNum,
                         currentRound: 0,
@@ -224,7 +263,9 @@ export class FightComponent implements OnInit {
             // 减少攻击力
             doSkill(pet_atta, 'ReducePower', (skill: SkillAttr) => {
                 console.log(`${pet_beAtta.name} ${SkillTip.EDEMA} 减少 ${toPercentage(skill.ReducePower.efficiency)} 攻击力`);
+                if (skill.ReducePower.roundNum == InfiniteRound.infinite) return;
                 pet_beAtta.debuff.push({
+                    name: 'ReducePower',
                     ReducePower: skill.ReducePower.efficiency,
                     roundNum: skill.ReducePower.roundNum,
                     currentRound: 0
@@ -263,7 +304,7 @@ export class FightComponent implements OnInit {
             }
             console.log(getLifeStr(pet_atta));
             console.log(getLifeStr(pet_beAtta));
-    
+
             this.setRound(pet_atta, pet_beAtta);
         }, 300);
     }
@@ -387,7 +428,7 @@ export class FightComponent implements OnInit {
     afterAttack(pet: pet) {
         if (pet.petData.isRound) { // 在自己回合添加回合数
             addCurrentRound(pet, 'buff', 'IncreasePower');
-            addCurrentRound(pet, 'debuff', 'Ailent');
+            addCurrentRound(pet, 'debuff', 'Silent');
             addCurrentRound(pet, 'debuff', 'ReducePower');
             addCurrentRound(pet, 'debuff', 'SeriousInjury');
         } else {
@@ -432,7 +473,9 @@ export class FightComponent implements OnInit {
     getPower(pet: pet): number {
         let power: number = copy(pet.power);
         doSkill(pet, 'IncreasePower', (skill: SkillAttr) => {
+            if (skill.IncreasePower.roundNum == InfiniteRound.infinite) return;
             pet.buff.push({
+                name: 'IncreasePower',
                 IncreasePower: skill.IncreasePower.efficiency,
                 roundNum: skill.IncreasePower.roundNum,
                 currentRound: 0
@@ -455,20 +498,38 @@ export class FightComponent implements OnInit {
     // buff图标刷新
     buffIconRefresh(pet: pet) {
         pet.buffIcon.splice(0, pet.buffIcon.length);
-        for (const key of ['buff','debuff']) {
+        for (const key of ['buff', 'debuff']) {
             for (const buff of pet[key]) {
-                for (const buffName in buff) {
-                    const iconIndex: number = getIconIndex(buffName, pet.buffIcon);
-                    if (iconIndex > -1) {
-                        pet.buffIcon[iconIndex].num++;
-                    } else {
-                        pet.buffIcon.push(
-                            new petBuffIcon(getIcon(buffName), getNameZh(buffName))
-                        )
-                    }
+                const iconIndex: number = getIconIndex(buff.name, pet.buffIcon);
+                if (iconIndex > -1) {
+                    pet.buffIcon[iconIndex].num++;
+                } else {
+                    pet.buffIcon.push(
+                        new petBuffIcon(getIcon(buff.name), `${getNameZh(buff.name)} ${buff.memo}`)
+                    )
                 }
             }
         }
+    }
+
+    getBuffNumMemo(buff: Buff) {
+        let memo: string;
+        switch (buff.name) {
+            case 'ImmuneSkill':
+                let immuneSkill_copy: string[] = copy(buff[name]);
+                for (const index in immuneSkill_copy) {
+                    immuneSkill_copy[index] = getNameZh(immuneSkill_copy[index]);
+                }
+                memo = immuneSkill_copy.join('、');
+                break;
+            case 'IncreasePower':
+                memo = toPercentage(buff[buff.name]);
+                break;
+            default:
+                memo = toPercentage(buff[buff.name]);
+                break;
+        }
+        return memo;
     }
 
     createBloodTxt() {

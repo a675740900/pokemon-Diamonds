@@ -50,8 +50,8 @@ export const isStiff = (pet: pet): boolean => {
 }
 
 // 是否沉默
-export const isAilent = (pet: pet): boolean => {
-    return pet.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.Ailent) || debuff.Ailent) > -1;
+export const isSilent = (pet: pet): boolean => {
+    return pet.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.Silent) || debuff.Silent) > -1;
 }
 
 // 是否重伤
@@ -76,7 +76,7 @@ export const isDead = (pet: pet): boolean => {
  * @param func 技能出发后要执行的方法
  */
 export const doSkill = (pet: pet, skillName: string, func: Function) => {
-    if (isAilent(pet)) return;
+    if (isSilent(pet)) return;
     const skill: SkillAttr = pet.passiveSkills.find((skill: SkillAttr) => !isEmpty(skill[skillName]));
     if (!isEmpty(skill) && pet.level >= skill.level) {
         const isHap: boolean = isHappen(skill[skillName].probability);

@@ -13,7 +13,7 @@ export class SkillAttr {
     Stiff_Twining?: Stiff_Twining; // 缠绕僵硬
     Stiff_Stone?: Stiff_Stone; // 石化僵硬
     Stiff_Frozen?: Stiff_Frozen; // 冰冻僵硬
-    Ailent?: Ailent; // 沉默
+    Silent?: Silent; // 沉默
     ReducePower?: ReducePower; // 减少攻击力
     Dodge?: Dodge; // 闪避
     IncreasePower?: IncreasePower; // 增加攻击力
@@ -49,8 +49,8 @@ export enum InfiniteRound {
  * 技能类型
  */
 export enum SkillType {
-    BUFF = 1, // 增益技能
-    DEBUFF = 2 // 减益技能
+    BUFF = 'buff', // 增益技能
+    DEBUFF = 'debuff' // 减益技能
 }
 
 /**
@@ -145,6 +145,7 @@ export class ViolentAttack {
     efficiencyProp: number; // 每级提升效率
     InjuryStatus: InjuryStatus = InjuryStatus.beforeCount;
     AttackTime: AttackTime = AttackTime.toAttack;
+    skillType: SkillType = SkillType.BUFF;
 
     constructor(probability: number, efficiency: number, IncreaseBleedingProbability: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
         [this.probability, this.efficiency, this.IncreaseBleedingProbability, this.probabilityProp, this.efficiencyProp] = 
@@ -164,6 +165,7 @@ export class ReduceInjury {
     efficiencyProp: number; // 每级提升效率
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
     triggerRound: Target = Target.enemy; // 触发回合
+    skillType: SkillType = SkillType.BUFF;
 
     constructor(probability: number, efficiency: number, roundNum: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
         [this.probability, this.efficiency, this.roundNum, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, roundNum, probabilityProp, efficiencyProp];
@@ -181,6 +183,7 @@ export class ShieldFromAttack {
     efficiencyProp: number; // 每级提升效率
     InjuryStatus: InjuryStatus = InjuryStatus.afterCount;
     triggerRound: Target = Target.self; // 触发回合
+    skillType: SkillType = SkillType.BUFF;
 
     constructor(probability: number, efficiency: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
         [this.probability, this.efficiency, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, probabilityProp, efficiencyProp];
@@ -196,6 +199,7 @@ export class Stiff_Twining {
     roundNum: number; // 僵硬回合数
     probabilityProp: number; // 每级提升触发几率
     triggerRound: Target = Target.self; // 触发回合
+    skillType: SkillType = SkillType.DEBUFF;
 
     constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
         [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum + 1, probabilityProp];
@@ -211,6 +215,7 @@ export class Stiff_Stone {
     roundNum: number; // 僵硬回合数
     probabilityProp: number; // 每级提升触发几率
     triggerRound: Target = Target.self; // 触发回合
+    skillType: SkillType = SkillType.DEBUFF;
 
     constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
         [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum + 1, probabilityProp];
@@ -225,6 +230,7 @@ export class Stiff_Frozen {
     roundNum: number; // 僵硬回合数
     probabilityProp: number; // 每级提升触发几率
     triggerRound: Target = Target.self; // 触发回合
+    skillType: SkillType = SkillType.DEBUFF;
 
     constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
         [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum + 1, probabilityProp];
@@ -242,6 +248,7 @@ export class ReducePower {
     efficiencyProp: number; // 每级提升效率
     roundNum: number; // 持续时间
     triggerRound: Target = Target.self; // 触发回合
+    skillType: SkillType = SkillType.DEBUFF;
 
     constructor(probability: number, efficiency: number, roundNum: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
         [this.probability, this.efficiency, this.roundNum, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, roundNum, probabilityProp, efficiencyProp];
@@ -259,6 +266,7 @@ export class Dodge {
     probabilityProp: number; // 每级提升触发几率
     efficiencyProp: number; // 每级提升效率
     triggerRound: Target = Target.enemy; // 触发回合
+    skillType: SkillType = SkillType.BUFF;
 
     constructor(probability: number, efficiency: number, removeDeBuff: boolean = false, probabilityProp: number = 0, efficiencyProp: number = 0) {
         [this.probability, this.efficiency, this.removeDeBuff, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, removeDeBuff, probabilityProp, efficiencyProp];
@@ -276,6 +284,7 @@ export class IncreasePower {
     probabilityProp: number; // 每级提升触发几率
     efficiencyProp: number; // 每级提升效率
     triggerRound: Target = Target.self; // 触发回合
+    skillType: SkillType = SkillType.BUFF;
 
     constructor(probability: number, efficiency: number, roundNum: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
         [this.probability, this.efficiency, this.roundNum, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, roundNum, probabilityProp, efficiencyProp];
@@ -291,6 +300,7 @@ export class IncreaseBlood {
     probabilityProp: number; // 每级提升触发几率
     efficiencyProp: number; // 每级提升效率
     triggerRound: Target = Target.enemy; // 触发回合
+    skillType: SkillType = SkillType.BUFF;
 
     constructor(probability: number, efficiency: number, bloodCondition: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
         [this.probability, this.efficiency, this.bloodCondition, this.probabilityProp, efficiencyProp] = [probability, efficiency, bloodCondition, probabilityProp, efficiencyProp];
@@ -306,6 +316,7 @@ export class AttackAbnormal {
     efficiencyProp: number; // 每级提升效率
     abnormal: string;
     roundNum: number;
+    skillType: SkillType = SkillType.BUFF;
 
     constructor(probability: number, efficiency: number, abnormal: string, roundNum: number, probabilityProp: number = 0, efficiencyProp: number = 0) {
         [this.probability, this.efficiency, this.abnormal, this.roundNum, this.probabilityProp, this.efficiencyProp] = [probability, efficiency, abnormal, roundNum, probabilityProp, efficiencyProp];
@@ -313,11 +324,12 @@ export class AttackAbnormal {
 }
 
 // 使敌人沉默，无法发动任何技能
-export class Ailent {
-    name: string = 'Ailent';
+export class Silent {
+    name: string = 'Silent';
     probability: number; // 触发几率 0.5表示50%的
     roundNum: number; // 持续回合数
-    probabilityProp: number; // 每级提升触发几率s
+    probabilityProp: number; // 每级提升触发几率
+    skillType: SkillType = SkillType.DEBUFF;
 
     constructor(probability: number, roundNum: number, probabilityProp: number = 0) {
         [this.probability, this.roundNum, this.probabilityProp] = [probability, roundNum, probabilityProp];
@@ -331,6 +343,7 @@ export class ImmuneSkill {
     probabilityProp: number; // 每级提升触发几率
     immuneSkill: string[];
     roundNum: number;
+    skillType: SkillType = SkillType.BUFF;
 
     constructor(probability: number, immuneSkill: string[], roundNum: number, probabilityProp: number = 0) {
         [this.probability, this.roundNum, this.immuneSkill, this.probabilityProp] = [probability, roundNum, immuneSkill, probabilityProp];

@@ -25,7 +25,7 @@ export class Warrior {
 
     SkillAttr: SkillAttr[] = [
         { memo: '攻击时，有20%的几率造成双倍伤害', ViolentAttack: new ViolentAttack(0.2, 2, 0) },
-        { memo: '减少受到的10%的伤害', ReduceInjury: new ReduceInjury(1, 0.1) },
+        // { memo: '减少受到的10%的伤害', ReduceInjury: new ReduceInjury(1, 0.1) },
     ];
 
 }

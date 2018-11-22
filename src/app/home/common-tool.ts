@@ -64,7 +64,7 @@ export class nameToNameZh {
 
 // 英文名对应中文名
 export const nameToNameZhs: nameToNameZh[] = [
-    new nameToNameZh('Alient', '沉默'),
+    new nameToNameZh('Silent', '沉默'),
     new nameToNameZh('Bleeding', '流血'),
     new nameToNameZh('BloodSucking', '吸血'),
     new nameToNameZh('ReduceInjury', '伤害减免'),
@@ -80,23 +80,25 @@ export const nameToNameZhs: nameToNameZh[] = [
     new nameToNameZh('ReducePower', '减少攻击力'),
     new nameToNameZh('SeriousInjury', '重伤'),
     new nameToNameZh('Shield', '护盾'),
-    new nameToNameZh('Immune', '免疫'),
+    new nameToNameZh('ImmuneSkill', '免疫'),
+    new nameToNameZh('AttackAbnormal', '攻击异常状态'),
 ]
 
 // 英文名对应图标
 export const nameToIconUrls: nameToIconUrl[] = [
-    new nameToIconUrl('Alient', 'assets/image/petBuff/alient.png'),
+    new nameToIconUrl('Silent', 'assets/image/petBuff/silent.png'),
     new nameToIconUrl('Bleeding', 'assets/image/petBuff/bleeding.png'),
-    new nameToIconUrl('ReduceInjury', 'assets/image/petBuff/defenses_up.png'),
     new nameToIconUrl('IncreaseInjury', 'assets/image/petBuff/defenses_low.png'),
     new nameToIconUrl('IncreaseArmor', 'assets/image/petBuff/resistance_up.png'),
+    new nameToIconUrl('IncreasePower', 'assets/image/petBuff/power_up.png'),
+    new nameToIconUrl('IncreaseBlood', 'assets/image/petBuff/increaseblood.png'),
+    new nameToIconUrl('ReduceInjury', 'assets/image/petBuff/defenses_up.png'),
     new nameToIconUrl('ReduceArmor', 'assets/image/petBuff/resistance_low.png'),
+    new nameToIconUrl('ReducePower', 'assets/image/petBuff/power_low.png'),
     new nameToIconUrl('Stiff_Frozen', 'assets/image/petBuff/frozen.png'),
     new nameToIconUrl('Stiff_Stone', 'assets/image/petBuff/stone.png'),
     new nameToIconUrl('Stiff_Sleep', 'assets/image/petBuff/sleep.png'),
     new nameToIconUrl('Stiff_Twining', 'assets/image/petBuff/twining.png'),
-    new nameToIconUrl('IncreasePower', 'assets/image/petBuff/power_up.png'),
-    new nameToIconUrl('ReducePower', 'assets/image/petBuff/power_low.png'),
     new nameToIconUrl('SeriousInjury', 'assets/image/petBuff/seriousinjury.png'),
     new nameToIconUrl('Shield', 'assets/image/petBuff/shield.png'),
     new nameToIconUrl('Sleep', 'assets/image/petBuff/sleep.png'),

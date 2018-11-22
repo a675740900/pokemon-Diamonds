@@ -1,4 +1,4 @@
-import { SkillAttr, ReduceInjury, BloodSucking, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Ailent, ImmuneSkill, Stiff_Stone, Stiff_Twining, InfiniteRound } from "../skill/skill.component";
+import { SkillAttr, ReduceInjury, BloodSucking, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Silent, ImmuneSkill, Stiff_Stone, Stiff_Twining, InfiniteRound } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
 import { copy, rmFloatPoint, toPercentage } from "../../home/common-tool";
 import { petBuffIcon, PetDataITFS } from "../../home/fight/fight-common";
@@ -13,6 +13,7 @@ export const petInfo: petInfoITFS = {
     maxGrade: 60
 }
 
+// 获取宠物
 export const getPet = (petguid: number) => {
     const petMatchList: matchITFS[] = getPetMatchList();
     let pet: any;
@@ -29,6 +30,7 @@ export interface petInfoITFS {
     maxGrade: number; // 最高等级
 }
 
+// 宠物属性
 export enum PetType {
     PLANT, // 植物系--克制飞行
     BEAST, // 猛兽系--克制植物
@@ -37,7 +39,12 @@ export enum PetType {
     FLIGHT, // 飞行系--克制海洋系
 }
 
+// 相克宠物 攻击力相应增加或减少
+export const restraintNum: number = 0.2;
+
 export class Buff {
+    name: string; // 状态名称
+    memo?: string; // 详细说明
     Bleeding?: number; // 流血
     Poisoning?: number; // 中毒
     SeriousInjury?: number; // 是否重伤
@@ -45,9 +52,10 @@ export class Buff {
     Stiff_Stone?: boolean; // 是否石化
     Stiff_Frozen?: boolean; // 是否被冰冻
     Stiff_Sleep?: boolean; // 是否睡眠
-    Ailent?: boolean; // 是否沉默
+    Silent?: boolean; // 是否沉默
     ReducePower?: number; // 减少攻击力
     IncreasePower?: number; // 增加攻击力
+    ImmuneSkill?: string[]; // 免疫状态
     IncreaseBleedingProbability?: number; // 增加流血几率
     roundNum: number; // 回合数
     currentRound: number; // 当前回合数
@@ -187,7 +195,7 @@ export class CupricSnake extends pet {
     pettype: PetType = PetType.METAL;
 
     passiveSkills: SkillAttr[] = [
-        { ReduceInjury: new ReduceInjury(1, 0.1, InfiniteRound.infinite, 0.1 / petInfo.maxGrade), level: 1, skillTip: SkillTip.BODYHARD },
+        { ReduceInjury: new ReduceInjury(1, 0.1, InfiniteRound.infinite, 0, 0.1 / petInfo.maxGrade), level: 1, skillTip: SkillTip.BODYHARD },
         { ImmuneSkill: new ImmuneSkill(1, ['Bleeding', 'Stiff_Stone'], InfiniteRound.infinite), level: 1 },
         { Stiff_Stone: new Stiff_Stone(0.1, 1), level: 2, skillTip: SkillTip.PETRIFACTION },
         { AttackAbnormal: new AttackAbnormal(1, 0.5, 'Stiff_Stone', InfiniteRound.infinite), level: 2, skillTip: SkillTip.PETRIFACTION },
@@ -220,7 +228,7 @@ export class Penguin extends pet {
     passiveSkills: SkillAttr[] = [
         { ReducePower: new ReducePower(0.2, 0.25, 1, 0.15 / petInfo.maxGrade, 0.1 / petInfo.maxGrade), level: 1, skillTip: SkillTip.EDEMA },
         { Dodge: new Dodge(0.2, 0.3, true, 0.15 / petInfo.maxGrade, 0.2 / petInfo.maxGrade), level: 1, skillTip: SkillTip.DIVING },
-        { Ailent: new Ailent(0.5, 1), level: 2, skillTip: SkillTip.AILENT },
+        { Silent: new Silent(0.5, 1), level: 2, skillTip: SkillTip.AILENT },
     ];
 
     petInstructions: any[] = [
@@ -228,7 +236,7 @@ export class Penguin extends pet {
             memo: `攻击时，有 ${this.passiveSkills[0].ReducePower.probability} 的几率使敌人水肿，其攻击力下降 ${this.passiveSkills[0].ReducePower.efficiency}， 持续 ${this.passiveSkills[0].ReducePower.roundNum} 回合`
         },
         { memo: `受到伤害时，有 ${this.passiveSkills[1].Dodge.probability} 的几率钻入水中躲避 ${this.passiveSkills[1].Dodge.efficiency} 的伤害，并移除所有减异效果` },
-        { memo: `攻击时，有 ${this.passiveSkills[2].Ailent.probability} 的几率使敌人沉默，无法发动被动技能，持续 ${this.passiveSkills[2].Ailent.roundNum} 回合` }
+        { memo: `攻击时，有 ${this.passiveSkills[2].Silent.probability} 的几率使敌人沉默，无法发动被动技能，持续 ${this.passiveSkills[2].Silent.roundNum} 回合` }
     ]
 }
 
@@ -250,7 +258,7 @@ export class Sparrow extends pet {
 
     passiveSkills: SkillAttr[] = [
         { Dodge: new Dodge(0.1, 1, false, 0.1 / petInfo.maxGrade), level: 1, skillTip: SkillTip.FLYINGFAST },
-        { IncreasePower: new IncreasePower(1, 0.2, InfiniteRound.infinite, 0.1 / petInfo.maxGrade), level: 1 },
+        { IncreasePower: new IncreasePower(1, 0.2, InfiniteRound.infinite, 0, 0.1 / petInfo.maxGrade), level: 1 },
     ];
 
     petInstructions: any[] = [
