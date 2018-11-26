@@ -6,7 +6,7 @@ import { PetBuffIcon, PetDataITFS } from "../../home/fight/fight-common";
 export const petList_plant: number[] = [1];
 export const petList_beast: number[] = [2];
 export const petList_metal: number[] = [3];
-export const petList_water: number[] = [4];
+export const petList_ocean: number[] = [4];
 export const petList_flight: number[] = [5];
 
 export const petInfo: petInfoITFS = {
@@ -35,24 +35,18 @@ export enum PetType {
     PLANT = 0, // 植物系--克制飞行
     BEAST = 1, // 猛兽系--克制植物
     METAL = 2, // 金属系--克制猛兽
-    WATER = 3, // 海洋系--克制金属
+    OCEAN = 3, // 海洋系--克制金属
     FLIGHT = 4, // 飞行系--克制海洋系
 }
 
-// 宠物属性名称
-export enum PetTypeName {
-    PLANT = '植物系', // 植物系--克制飞行
-    BEAST = '野兽系', // 猛兽系--克制植物
-    METAL = '金属系', // 金属系--克制猛兽
-    WATER = '海洋系', // 海洋系--克制金属
-    FLIGHT = '飞行系', // 飞行系--克制海洋系
+const petTypeName: string[] = ['植物系', '野兽系', '金属系', '海洋系', '飞行系'];
+const petTypeNameEn: string[] = ['PLANT', 'BEAST', 'METAL', 'OCEAN', 'FLIGHT'];
+
+export const getPetTypeName = (petType: PetType): string => {
+    return petTypeName[petType];
 }
-
-export const getPetTypeName = (petType: PetType): PetTypeName => {
-    for (const index in PetTypeName) {
-
-    }
-    return PetTypeName.BEAST;
+export const getPetTypeNameEn = (petType: PetType): string => {
+    return petTypeNameEn[petType];
 }
 
 // 相克宠物 攻击力相应增加或减少
@@ -239,7 +233,7 @@ export class Penguin extends Pet {
     defensesProp: number = 0.6;
     maxLevel: number = 2;
     defenses: number = 1;
-    pettype: PetType = PetType.WATER;
+    pettype: PetType = PetType.OCEAN;
 
     passiveSkills: SkillAttr[] = [
         { ReducePower: new ReducePower(0.2, 0.25, 1, 0.15 / petInfo.maxGrade, 0.1 / petInfo.maxGrade), level: 1, skillTip: SkillTip.EDEMA },

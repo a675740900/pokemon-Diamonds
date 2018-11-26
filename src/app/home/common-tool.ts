@@ -44,7 +44,7 @@ export const toPercentage = (num: number): string => {
     return `${rmFloatPoint(num * 100)}%`
 }
 
-export class NameToIconUrl {
+class NameToIconUrl {
     name: string;
     url: string;
 
@@ -52,8 +52,7 @@ export class NameToIconUrl {
         [this.name, this.url] = [name, url];
     }
 }
-
-export class NameToNameZh {
+class NameToNameZh {
     name: string;
     namezh: string;
 
@@ -63,7 +62,7 @@ export class NameToNameZh {
 }
 
 // 英文名对应中文名
-export const NameToNameZhs: NameToNameZh[] = [
+const NameToNameZhs: NameToNameZh[] = [
     new NameToNameZh('Silent', '沉默'),
     new NameToNameZh('Bleeding', '流血'),
     new NameToNameZh('BloodSucking', '吸血'),
@@ -85,23 +84,32 @@ export const NameToNameZhs: NameToNameZh[] = [
 ]
 
 // 英文名对应图标
-export const NameToIconUrls: NameToIconUrl[] = [
-    new NameToIconUrl('Silent', 'assets/image/petBuff/silent.png'),
-    new NameToIconUrl('Bleeding', 'assets/image/petBuff/bleeding.png'),
-    new NameToIconUrl('IncreaseInjury', 'assets/image/petBuff/defenses_low.png'),
-    new NameToIconUrl('IncreaseArmor', 'assets/image/petBuff/resistance_up.png'),
-    new NameToIconUrl('IncreasePower', 'assets/image/petBuff/power_up.png'),
-    new NameToIconUrl('IncreaseBlood', 'assets/image/petBuff/increaseblood.png'),
-    new NameToIconUrl('ReduceInjury', 'assets/image/petBuff/defenses_up.png'),
-    new NameToIconUrl('ReduceArmor', 'assets/image/petBuff/resistance_low.png'),
-    new NameToIconUrl('ReducePower', 'assets/image/petBuff/power_low.png'),
-    new NameToIconUrl('Stiff_Frozen', 'assets/image/petBuff/frozen.png'),
-    new NameToIconUrl('Stiff_Stone', 'assets/image/petBuff/stone.png'),
-    new NameToIconUrl('Stiff_Sleep', 'assets/image/petBuff/sleep.png'),
-    new NameToIconUrl('Stiff_Twining', 'assets/image/petBuff/twining.png'),
-    new NameToIconUrl('SeriousInjury', 'assets/image/petBuff/seriousinjury.png'),
-    new NameToIconUrl('Shield', 'assets/image/petBuff/shield.png'),
-    new NameToIconUrl('Sleep', 'assets/image/petBuff/sleep.png'),
+const NameToIconUrls: NameToIconUrl[] = [
+    new NameToIconUrl('Silent', 'assets/image/pet-buff/silent.png'),
+    new NameToIconUrl('Bleeding', 'assets/image/pet-buff/bleeding.png'),
+    new NameToIconUrl('IncreaseInjury', 'assets/image/pet-buff/defenses_low.png'),
+    new NameToIconUrl('IncreaseArmor', 'assets/image/pet-buff/resistance_up.png'),
+    new NameToIconUrl('IncreasePower', 'assets/image/pet-buff/power_up.png'),
+    new NameToIconUrl('IncreaseBlood', 'assets/image/pet-buff/increaseblood.png'),
+    new NameToIconUrl('ReduceInjury', 'assets/image/pet-buff/defenses_up.png'),
+    new NameToIconUrl('ReduceArmor', 'assets/image/pet-buff/resistance_low.png'),
+    new NameToIconUrl('ReducePower', 'assets/image/pet-buff/power_low.png'),
+    new NameToIconUrl('Stiff_Frozen', 'assets/image/pet-buff/frozen.png'),
+    new NameToIconUrl('Stiff_Stone', 'assets/image/pet-buff/stone.png'),
+    new NameToIconUrl('Stiff_Sleep', 'assets/image/pet-buff/sleep.png'),
+    new NameToIconUrl('Stiff_Twining', 'assets/image/pet-buff/twining.png'),
+    new NameToIconUrl('SeriousInjury', 'assets/image/pet-buff/seriousinjury.png'),
+    new NameToIconUrl('Shield', 'assets/image/pet-buff/shield.png'),
+    new NameToIconUrl('Sleep', 'assets/image/pet-buff/sleep.png'),
+]
+
+// 宠物类型图标队形
+const petTypeIconUrls: NameToIconUrl[] = [
+    new NameToIconUrl('PLANT', 'assets/image/pet-type/PLANT.png'),
+    new NameToIconUrl('BEAST', 'assets/image/pet-type/BEAST.png'),
+    new NameToIconUrl('METAL', 'assets/image/pet-type/METAL.png'),
+    new NameToIconUrl('OCEAN', 'assets/image/pet-type/OCEAN.png'),
+    new NameToIconUrl('FLIGHT', 'assets/image/pet-type/FLIGHT.png')
 ]
 
 // 获取图标地址
@@ -119,6 +127,16 @@ export const getNameZh = (buffName: string): string => {
     const namezh: NameToNameZh = NameToNameZhs.find((nameZh: NameToNameZh) => nameZh.name === buffName);
     if (!isEmpty(namezh)) {
         return namezh.namezh;
+    } else {
+        return '';
+    }
+}
+
+// 获取宠物类型图标地址
+export const getPetTypeIcon = (petType: string): string => {
+    const icon: NameToIconUrl = petTypeIconUrls.find((petTypeIconUrl: NameToIconUrl) => petTypeIconUrl.name == petType);
+    if (!isEmpty(icon)) {
+        return icon.url;
     } else {
         return '';
     }

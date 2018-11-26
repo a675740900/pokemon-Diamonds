@@ -5,7 +5,7 @@
     <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
 
         <div class='progressBar'>
-            <span>Lv.{{pet_Enemy.grade}} {{pet_Enemy.name}}</span>
+            <span>Lv.{{pet_Enemy.grade}} {{pet_Enemy.name}}</span><br>
             <span style="margin-bottom: 20%; margin-right: 2%;">HP</span>
             <span class='blood-font'>{{pet_Enemy.current_HP}}/{{pet_Enemy.HP}}</span>
             <mat-progress-bar color='warn' mode="buffer" [value]="(pet_Enemy.current_HP/pet_Enemy.HP)*100"
@@ -18,7 +18,7 @@
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1" style='background: #DDBDF1'>
         <div class='progressBar'>
-            <span>Lv.{{pet_my.grade}} {{pet_my.name}}</span>
+            <span>Lv.{{pet_my.grade}} {{pet_my.name}}</span><br>
             <span style="margin-bottom: 20%; margin-right: 2%;">HP</span>
             <span class='blood-font'>{{pet_my.current_HP}}/{{pet_my.HP}}</span>
             <mat-progress-bar color='warn' mode="buffer" [value]="(pet_my.current_HP/pet_my.HP)*100" [bufferValue]='((pet_my.shield+pet_my.current_HP)/pet_my.HP)*100'></mat-progress-bar>

@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { GameHomeComponent } from './game-home/game-home.component';
 import { ExperienceComponent } from '../data-source/experience/experience.component';
 import { PetIntroduceComponent } from '../component/pet-introduce.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
@@ -19,6 +20,7 @@ import { PetIntroduceComponent } from '../component/pet-introduce.component';
         MatTableModule,
         BrowserAnimationsModule,
         MatInputModule,
+        FormsModule
     ],
     declarations: [
         Page1Component,

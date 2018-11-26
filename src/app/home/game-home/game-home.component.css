@@ -4,9 +4,17 @@
     left: 0;
     right: 0;
     z-index: 2;
-    background-color: brown
+    /* background-color: brown */
 }
 
 .navbar > * {
     float: right;
+}
+
+.example-icon {
+    padding: 0 14px;
+}
+  
+.example-spacer {
+    flex: 1 1 auto;
 }

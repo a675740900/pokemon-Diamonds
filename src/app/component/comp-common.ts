@@ -1,4 +1,5 @@
-import { getIcon, getNameZh } from "../home/common-tool";
+import { getIcon, getNameZh, getPetTypeIcon } from "../home/common-tool";
+import { getPetTypeName, PetType, getPetTypeNameEn } from "../data-source/pet/pet.component";
 
 // 介绍数组类型
 export class IntroduceList_buff {
@@ -25,12 +26,10 @@ export class IntroduceList {
 }
 
 // 宠物介绍卡片类
-export class PetIntroduce {
-    title: string; // 表体
-    subtitle: string; // 字幕
-    url: string; // 宠物图片路径
-
-    constructor(title: string, subtitle: string, url: string) {
-        [this.title, this.subtitle, this.url] = [title, subtitle, url];
-    }
+export interface PetIntroduce {
+    title?: string; // 表体
+    subtitle?: string; // 字幕
+    petType?: PetType; // 宠物类型
+    petTypeImg?: string; // 宠物类型图片路径
+    url?: string; // 宠物图片路径
 }

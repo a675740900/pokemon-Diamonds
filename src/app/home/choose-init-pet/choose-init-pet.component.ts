@@ -3,7 +3,7 @@ import { pageRouterAnimate } from '../../component/animations/router.animate';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageRouterParam } from '../home/home-common';
 import { PetIntroduce } from '../../component/comp-common';
-import { Pet, getPet, getPetTypeName } from '../../data-source/pet/pet.component';
+import { Pet, getPet, getPetTypeName, getPetTypeNameEn } from '../../data-source/pet/pet.component';
 
 @Component({
     selector: 'app-choose-init-pet',
@@ -26,8 +26,6 @@ export class ChooseInitPetComponent implements OnInit {
         getPet(3)
     ]
 
-    petIntroduce: PetIntroduce[] = [];
-
     constructor(private activatedRoute: ActivatedRoute, private router: Router) {
         activatedRoute.queryParams.subscribe((queryParams: PageRouterParam) => {
             this.lastPageParam = queryParams;
@@ -39,11 +37,6 @@ export class ChooseInitPetComponent implements OnInit {
 
     ngOnInit() {
         
-        // 初始化 可选择宠物的信息
-        for (const pet of this.choosePets) {
-            getPetTypeName(pet.pettype);
-            this.petIntroduce.push(new PetIntroduce(pet.name, '', ''));
-        }
     }
 
     goBack() {
