@@ -68,6 +68,10 @@ export const pageRouterAnimate = trigger('routerAnimate', [
         style({ transform: 'translate3d(0,0,0)' }),
         animate('.5s ease-in-out', style({ transform: 'translate3d(-100%,0,0)' }))
     ]),
+    transition('* => goHome', [
+        style({ transform: 'translate3d(0,0,0)' }),
+        animate('.5s ease-in-out', style({ transform: 'translate3d(100%,0,0)' }))
+    ]),
     transition('* => goBack', [
         style({ transform: 'translate3d(0,0,0)' }),
         animate('.5s ease-in-out', style({ transform: 'translate3d(100%,0,0)' }))

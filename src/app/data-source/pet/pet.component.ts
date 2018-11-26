@@ -1,7 +1,7 @@
 import { SkillAttr, ReduceInjury, BloodSucking, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Silent, ImmuneSkill, Stiff_Stone, Stiff_Twining, InfiniteRound } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
 import { copy, rmFloatPoint, toPercentage } from "../../home/common-tool";
-import { petBuffIcon, PetDataITFS } from "../../home/fight/fight-common";
+import { PetBuffIcon, PetDataITFS } from "../../home/fight/fight-common";
 
 export const petList_plant: number[] = [1];
 export const petList_beast: number[] = [2];
@@ -32,11 +32,27 @@ export interface petInfoITFS {
 
 // 宠物属性
 export enum PetType {
-    PLANT, // 植物系--克制飞行
-    BEAST, // 猛兽系--克制植物
-    METAL, // 金属系--克制猛兽
-    WATER, // 海洋系--克制金属
-    FLIGHT, // 飞行系--克制海洋系
+    PLANT = 0, // 植物系--克制飞行
+    BEAST = 1, // 猛兽系--克制植物
+    METAL = 2, // 金属系--克制猛兽
+    WATER = 3, // 海洋系--克制金属
+    FLIGHT = 4, // 飞行系--克制海洋系
+}
+
+// 宠物属性名称
+export enum PetTypeName {
+    PLANT = '植物系', // 植物系--克制飞行
+    BEAST = '野兽系', // 猛兽系--克制植物
+    METAL = '金属系', // 金属系--克制猛兽
+    WATER = '海洋系', // 海洋系--克制金属
+    FLIGHT = '飞行系', // 飞行系--克制海洋系
+}
+
+export const getPetTypeName = (petType: PetType): PetTypeName => {
+    for (const index in PetTypeName) {
+
+    }
+    return PetTypeName.BEAST;
 }
 
 // 相克宠物 攻击力相应增加或减少
@@ -61,7 +77,7 @@ export class Buff {
     currentRound: number; // 当前回合数
 }
 
-export class pet {
+export class Pet {
     petguid: number; // 宠物编号
     name: string; // 宠物名称
     HP: number; // 血量
@@ -86,7 +102,7 @@ export class pet {
     exp: number = 0; // 当前经验值
     buff: Buff[] = [];
     debuff: Buff[] = [];
-    buffIcon: petBuffIcon[] = []; // buff图标
+    buffIcon: PetBuffIcon[] = []; // buff图标
     petData: PetDataITFS = {}; // 数据信息
 }
 
@@ -116,7 +132,7 @@ export const getLevelProp = (): LevelPropITFS[] => {
     return LevelProp;
 }
 
-export class Argy extends pet {
+export class Argy extends Pet {
     petguid: number = 1;
     name: string = '艾草';
     HP: number = 50;
@@ -149,7 +165,7 @@ export class Argy extends pet {
     ]
 }
 
-export class Mantis extends pet {
+export class Mantis extends Pet {
     petguid: number = 2;
     name: string = '螳螂';
     HP: number = 50;
@@ -178,7 +194,7 @@ export class Mantis extends pet {
     ]
 }
 
-export class CupricSnake extends pet {
+export class CupricSnake extends Pet {
     petguid: number = 3;
     name: string = '赤铜蛇';
     HP: number = 70;
@@ -209,7 +225,7 @@ export class CupricSnake extends pet {
     ]
 }
 
-export class Penguin extends pet {
+export class Penguin extends Pet {
     petguid: number = 4;
     name: string = '企鹅';
     HP: number = 55;
@@ -240,7 +256,7 @@ export class Penguin extends pet {
     ]
 }
 
-export class Sparrow extends pet {
+export class Sparrow extends Pet {
     petguid: number = 5;
     name: string = '老鹰';
     HP: number = 55;

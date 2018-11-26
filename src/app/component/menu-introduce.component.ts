@@ -5,19 +5,19 @@ import { IntroduceList } from './comp-common';
     selector: 'app-menu-introduce',
     template: `
     <mat-accordion>
-    <div>
-        <mat-expansion-panel *ngFor='let introduce of introduceList'>
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                {{introduce.title}}
-                <img class='imgBuff' src="{{introduce.url}}" [hidden]='!introduce.url'>
-                </mat-panel-title>
-                <mat-panel-description>
-                    {{introduce.description}}
-                </mat-panel-description>
-            </mat-expansion-panel-header>
-            <p>{{introduce.detailed}}</p>
-        </mat-expansion-panel>
+        <div>
+            <mat-expansion-panel *ngFor='let introduce of introduceList'>
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                    {{introduce.title}}
+                    <img class='imgBuff' src="{{introduce.url}}" [hidden]='!introduce.url'>
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        {{introduce.description}}
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <p>{{introduce.detailed}}</p>
+            </mat-expansion-panel>
         </div>
     </mat-accordion>
   `,

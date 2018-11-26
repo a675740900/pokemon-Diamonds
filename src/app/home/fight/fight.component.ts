@@ -1,10 +1,10 @@
 import { Component, OnInit, Inject, ViewChild, Renderer2, ElementRef } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
-import { getPet, pet, Buff, getLevelProp, LevelPropITFS } from '../../data-source/pet/pet.component';
+import { getPet, Pet, Buff, getLevelProp, LevelPropITFS } from '../../data-source/pet/pet.component';
 import { isEmpty, rmFloatPoint, copy, toPercentage, getIcon, getNameZh } from '../common-tool';
 import { SkillAttr, SkillTip, InfiniteRound } from 'src/app/data-source/skill/skill.component';
-import { getLifeStr, isStiff, getStiffIndex, doSkill, isDead, addCurrentRound, DefensesOperation, petsITFS, petInfo, petBuffIcon, getIconIndex, isImmune, PetDataITFS, PetDatasITFS } from './fight-common';
+import { getLifeStr, isStiff, getStiffIndex, doSkill, isDead, addCurrentRound, DefensesOperation, petsITFS, petInfo, PetBuffIcon, getIconIndex, isImmune, PetDataITFS, PetDatasITFS } from './fight-common';
 
 @Component({
     selector: 'app-fight',
@@ -12,8 +12,8 @@ import { getLifeStr, isStiff, getStiffIndex, doSkill, isDead, addCurrentRound, D
     styleUrls: ['./fight.component.css']
 })
 export class FightComponent implements OnInit {
-    pet_my: pet;
-    pet_Enemy: pet;
+    pet_my: Pet;
+    pet_Enemy: Pet;
     current_roundNum: number = 1; // 当前回合数
 
     @ViewChild('pet_my_span') pet_my_span: ElementRef;
@@ -42,13 +42,13 @@ export class FightComponent implements OnInit {
     }
 
     // 设置宠物等级、阶级
-    reSetPet(pet: pet, petInfo: petInfo) {
+    reSetPet(pet: Pet, petInfo: petInfo) {
         pet.grade = petInfo.grade;
         pet.level = petInfo.level;
     }
 
     // 相对应等级阶级提升属性值
-    setGrade(pet: pet) {
+    setGrade(pet: Pet) {
         const levelProp: LevelPropITFS[] = getLevelProp();
         pet.current_HP = pet.HP = this.getAttrNum(pet, 'HP', levelProp);
         pet.MP = this.getAttrNum(pet, 'MP', levelProp);
@@ -69,12 +69,12 @@ export class FightComponent implements OnInit {
     }
 
     // 技能触发几率、效率计算公式
-    getAttrNum(pet: pet, lowerStr: string, levelProp: LevelPropITFS[]): number {
+    getAttrNum(pet: Pet, lowerStr: string, levelProp: LevelPropITFS[]): number {
         return rmFloatPoint((pet[lowerStr] + pet[`${lowerStr}Prop`] * (pet.grade - 1)) * (1 + levelProp[pet.level][`${lowerStr}Prop`]));
     }
 
     // 设置初始buff，一些百分百触发的buff
-    setBuff(pet: pet) {
+    setBuff(pet: Pet) {
         for (const skill of pet.passiveSkills) {
             for (const skillName in skill) {
                 if (!isEmpty(skill[skillName].roundNum)) {
@@ -100,7 +100,7 @@ export class FightComponent implements OnInit {
     }
 
     // 检查两只宠物克制关系
-    checkRestraint(pet1: pet, pet2: pet) {
+    checkRestraint(pet1: Pet, pet2: Pet) {
         const restraintNum: number = Math.abs(pet1.pettype - pet2.pettype);
         if (restraintNum == 1 || restraintNum == 4) {
             if ((pet1.pettype > pet2.pettype && pet2.pettype != 0) || (restraintNum == 4 && pet1.pettype == 0)) {
@@ -143,7 +143,7 @@ export class FightComponent implements OnInit {
      * @param pet_atta 发动攻击的宠物
      * @param pet_beAtta 被攻击的宠物
      */
-    attack(pet_atta: pet, pet_beAtta: pet) {
+    attack(pet_atta: Pet, pet_beAtta: Pet) {
         console.log(`------------第 ${this.current_roundNum} 回合------------`);
         let hurt: number = 0; // 此次攻击造成的伤害
         let power: number = this.getPower(pet_atta); // 攻击力
@@ -310,7 +310,7 @@ export class FightComponent implements OnInit {
     }
 
     // 治疗时计算是否重伤
-    getBloodFromSeriousInjury(pet: pet, cure: number): any {
+    getBloodFromSeriousInjury(pet: Pet, cure: number): any {
         let obj: any = {};
         const debuff: Buff = pet.debuff.find((debuff: Buff) => !isEmpty(debuff.SeriousInjury) && debuff.SeriousInjury > 0);
         if (!isEmpty(debuff)) {
@@ -322,7 +322,7 @@ export class FightComponent implements OnInit {
     }
 
     // 增加血量
-    bloodRecovery(pet: pet, blood: number) {
+    bloodRecovery(pet: Pet, blood: number) {
         const HP: number = rmFloatPoint(pet.current_HP + blood);
         if (HP <= pet.HP) {
             pet.current_HP = HP;
@@ -330,7 +330,7 @@ export class FightComponent implements OnInit {
     }
 
     // 减少血量
-    bloodLose(pet: pet, blood: number) {
+    bloodLose(pet: Pet, blood: number) {
         const HP: number = rmFloatPoint(pet.current_HP - blood);
         if (HP < 0) {
             pet.current_HP = 0;
@@ -340,7 +340,7 @@ export class FightComponent implements OnInit {
     }
 
     // 宠物受到攻击
-    toAttack(pet_atta: pet, pet_beAtta: pet, hurtNum: number): number {
+    toAttack(pet_atta: Pet, pet_beAtta: Pet, hurtNum: number): number {
         let hurt: number = copy(hurtNum);
 
         let attackAbnormalStr: string = '';
@@ -391,7 +391,7 @@ export class FightComponent implements OnInit {
      * @param pet_atta 当前回合的pet（交换前）
      * @param pet_beAtta 
      */
-    setRound(pet_atta: pet, pet_beAtta: pet) {
+    setRound(pet_atta: Pet, pet_beAtta: Pet) {
         this.changeRound(pet_atta, pet_beAtta);
 
         const stiffIndex_atta = getStiffIndex(pet_atta);
@@ -418,14 +418,14 @@ export class FightComponent implements OnInit {
     }
 
     // 改变回合次
-    changeRound(pet_atta: pet, pet_beAtta: pet) {
+    changeRound(pet_atta: Pet, pet_beAtta: Pet) {
         pet_atta.petData.isAttack = false;
         pet_atta.petData.isRound = !pet_atta.petData.isRound;
         pet_beAtta.petData.isRound = !pet_beAtta.petData.isRound;
     }
 
     // 检查buff效果
-    afterAttack(pet: pet) {
+    afterAttack(pet: Pet) {
         if (pet.petData.isRound) { // 在自己回合添加回合数
             addCurrentRound(pet, 'buff', 'IncreasePower');
             addCurrentRound(pet, 'debuff', 'Silent');
@@ -455,7 +455,7 @@ export class FightComponent implements OnInit {
     }
 
     // 检查buff效果是否结束，结束的移除
-    checkBuff(pet: pet) {
+    checkBuff(pet: Pet) {
         for (let i = 0; i < pet.buff.length; i++) {
             if (pet.buff[i].currentRound >= pet.buff[i].roundNum) {
                 pet.buff.splice(i--, 1);
@@ -470,7 +470,7 @@ export class FightComponent implements OnInit {
     }
 
     // 获取当前攻击的攻击力
-    getPower(pet: pet): number {
+    getPower(pet: Pet): number {
         let power: number = copy(pet.power);
         doSkill(pet, 'IncreasePower', (skill: SkillAttr) => {
             if (skill.IncreasePower.roundNum == InfiniteRound.infinite) return;
@@ -496,7 +496,7 @@ export class FightComponent implements OnInit {
     }
 
     // buff图标刷新
-    buffIconRefresh(pet: pet) {
+    buffIconRefresh(pet: Pet) {
         pet.buffIcon.splice(0, pet.buffIcon.length);
         for (const key of ['buff', 'debuff']) {
             for (const buff of pet[key]) {
@@ -505,7 +505,7 @@ export class FightComponent implements OnInit {
                     pet.buffIcon[iconIndex].num++;
                 } else {
                     pet.buffIcon.push(
-                        new petBuffIcon(getIcon(buff.name), `${getNameZh(buff.name)} ${this.getBuffNumMemo(buff)}`)
+                        new PetBuffIcon(getIcon(buff.name), `${getNameZh(buff.name)} ${this.getBuffNumMemo(buff)}`)
                     )
                 }
             }

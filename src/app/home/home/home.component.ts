@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
     constructor(private router: Router, public dialog: MatDialog, private activatedRoute: ActivatedRoute) {
         activatedRoute.queryParams.subscribe((queryParams: PageRouterParam) => {
             this.lastPageParam = queryParams;
-            if (this.lastPageParam.isBack) {
+            if (this.lastPageParam.goBack) {
                 this.boxState = 'fromBack';
             }
         });
@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
             case 'goNext':
                 this.router.navigate(['/home/choose-init-pet'], {
                     queryParams: {
-                        isNext: true
+                        goNext: true
                     }
                 });
                 break;

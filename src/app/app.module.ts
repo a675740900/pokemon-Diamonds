@@ -20,7 +20,7 @@ import { BrowserModule } from '@angular/platform-browser';
         SettingComponent,
         HomeComponent,
         IntroduceComponent,
-        MenuIntroduceComponent
+        MenuIntroduceComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -28,7 +28,7 @@ import { BrowserModule } from '@angular/platform-browser';
         ReactiveFormsModule,
         HomeModule,
         MaterialModule,
-        BrowserModule
+        BrowserModule,
     ],
     exports: [
         MenuIntroduceComponent,
@@ -39,7 +39,6 @@ import { BrowserModule } from '@angular/platform-browser';
         SettingComponent,
         FightComponent,
         IntroduceComponent,
-        MenuIntroduceComponent
     ]
 })
 export class AppModule { }

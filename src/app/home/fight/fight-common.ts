@@ -1,4 +1,4 @@
-import { pet, Buff } from "../../data-source/pet/pet.component";
+import { Pet, Buff } from "../../data-source/pet/pet.component";
 import { isEmpty, isHappen, rmFloatPoint } from "../common-tool";
 import { SkillAttr } from "../../data-source/skill/skill.component";
 
@@ -24,7 +24,7 @@ export interface PetDataITFS {
 }
 
 // 宠物buff图标
-export class petBuffIcon {
+export class PetBuffIcon {
     url: string;
     name: string;
     num: number = 1;
@@ -34,33 +34,33 @@ export class petBuffIcon {
     }
 }
 
-export const getLifeStr = (pet: pet): string => {
+export const getLifeStr = (pet: Pet): string => {
     return `${pet.name} 当前生命值 ${pet.current_HP}/${pet.HP}`;
 }
 
-export const getStiffIndex = (pet: pet): number => {
+export const getStiffIndex = (pet: Pet): number => {
     return pet.debuff.findIndex((debuff: Buff) =>
         debuff.Stiff_Stone || debuff.Stiff_Twining
     );
 }
 
 // 判断是否处于僵硬状态
-export const isStiff = (pet: pet): boolean => {
+export const isStiff = (pet: Pet): boolean => {
     return getStiffIndex(pet) > -1;
 }
 
 // 是否沉默
-export const isSilent = (pet: pet): boolean => {
+export const isSilent = (pet: Pet): boolean => {
     return pet.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.Silent) || debuff.Silent) > -1;
 }
 
 // 是否重伤
-export const isSeriousInjury = (pet: pet): boolean => {
+export const isSeriousInjury = (pet: Pet): boolean => {
     return pet.debuff.findIndex((debuff: Buff) => !isEmpty(debuff.SeriousInjury) && debuff.SeriousInjury > 0) > -1
 }
 
 // 判断是否死亡
-export const isDead = (pet: pet): boolean => {
+export const isDead = (pet: Pet): boolean => {
     if (pet.current_HP === 0) {
         console.log(getLifeStr(pet));
         console.log(`${pet.name} 已死亡`);
@@ -75,7 +75,7 @@ export const isDead = (pet: pet): boolean => {
  * @param skillName 技能名称
  * @param func 技能出发后要执行的方法
  */
-export const doSkill = (pet: pet, skillName: string, func: Function) => {
+export const doSkill = (pet: Pet, skillName: string, func: Function) => {
     if (isSilent(pet)) return;
     const skill: SkillAttr = pet.passiveSkills.find((skill: SkillAttr) => !isEmpty(skill[skillName]));
     if (!isEmpty(skill) && pet.level >= skill.level) {
@@ -99,7 +99,7 @@ export const getBuffIndex = (buffs: Buff[], buffName: string): number => {
  * @param buffType buff类型 --> buff 或 debuff
  * @param buffName 
  */
-export const addCurrentRound = (pet: pet, buffType: string, buffName: string) => {
+export const addCurrentRound = (pet: Pet, buffType: string, buffName: string) => {
     for (const buff of pet[buffType]) {
         if (!isEmpty(buff[buffName])) {
             buff.currentRound++;
@@ -118,12 +118,12 @@ export const DefensesOperation = (defenses: number, hurt: number): number => {
 }
 
 // buff图标是否已存在
-export const getIconIndex = (buffName: string, icons: petBuffIcon[]): number => {
-    return icons.findIndex((icon: petBuffIcon) => icon.name === buffName);
+export const getIconIndex = (buffName: string, icons: PetBuffIcon[]): number => {
+    return icons.findIndex((icon: PetBuffIcon) => icon.name === buffName);
 }
 
 // 是否免疫
-export const isImmune = (pet: pet, skill: SkillAttr): boolean => {
+export const isImmune = (pet: Pet, skill: SkillAttr): boolean => {
     let isImmune: boolean = false;
     // 免疫
     doSkill(pet, 'ImmuneSkill', (skill2: SkillAttr) => {

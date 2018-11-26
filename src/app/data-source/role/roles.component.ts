@@ -1,6 +1,6 @@
 import { SkillAttr, ViolentAttack, ReduceInjury, ShieldFromAttack, Bleeding } from "../skill/skill.component";
 
-export class base_role_attr {
+export class Base_role_attr {
     roleguid: number; // 角色编号
     power: number; // 力量
     magic: number; // 智慧

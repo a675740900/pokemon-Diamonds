@@ -7,7 +7,9 @@ import { MaterialModule } from '../component/material-module';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
-import { ExperienceComponent } from './experience/experience.component';
+import { GameHomeComponent } from './game-home/game-home.component';
+import { ExperienceComponent } from '../data-source/experience/experience.component';
+import { PetIntroduceComponent } from '../component/pet-introduce.component';
 
 @NgModule({
     imports: [
@@ -22,6 +24,12 @@ import { ExperienceComponent } from './experience/experience.component';
         Page1Component,
         ChooseInitPetComponent,
         ExperienceComponent,
+        GameHomeComponent,
+        PetIntroduceComponent
+    ],
+    exports: [
+        PetIntroduceComponent
     ]
+
 })
 export class HomeModule { }

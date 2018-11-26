@@ -1,7 +1,7 @@
 /**
  * 角色生成类
  */
-export class role {
+export class Role {
     roleguid: string; // 角色编号
     name: string; // 名称
     HP: number; // 血量
