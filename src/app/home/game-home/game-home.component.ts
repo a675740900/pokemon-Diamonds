@@ -3,7 +3,8 @@ import { MatSnackBar } from '@angular/material';
 import { PageRouterParam } from '../home/home-common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { pageRouterAnimate } from '../../component/animations/router.animate';
-import { PlayerInfoITFS } from './game-home-common';
+import { PlayerInfoITFS, MenuInfo } from './game-home-common';
+import { boxAnimate } from '../../component/animations/base-click';
 
 @Component({
     selector: 'app-game-home',
@@ -11,6 +12,7 @@ import { PlayerInfoITFS } from './game-home-common';
     styleUrls: ['./game-home.component.css'],
     animations: [
         pageRouterAnimate,
+        boxAnimate
     ]
 })
 // 游戏界面
@@ -18,9 +20,14 @@ export class GameHomeComponent implements OnInit {
     playerInfo: PlayerInfoITFS; // 玩家资料
 
     // 定义开始的状态
-    private boxState: string;
+    boxState: string;
+    menubox: string;
     // 页面参数
     lastPageParam: PageRouterParam;
+
+    menuParam: MenuInfo = {
+        show: false
+    }
 
     constructor(private activatedRoute: ActivatedRoute, private router: Router, public snackBar: MatSnackBar) {
         activatedRoute.queryParams.subscribe((queryParams: PageRouterParam) => {
@@ -38,10 +45,24 @@ export class GameHomeComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.setMenuBox();
     }
 
     goHome() {
         this.boxState = 'goHome';
+    }
+
+    menuClick() {
+        this.setMenuShow();
+    }
+
+    setMenuShow() {
+        this.menuParam.show = !this.menuParam.show;
+        this.setMenuBox();
+    }
+
+    setMenuBox() {
+        this.menubox = this.menuParam.show ? 'show' : 'hidden';
     }
 
     routerAnimateCBack() {
@@ -57,5 +78,9 @@ export class GameHomeComponent implements OnInit {
                 });
                 break;
         }
+    }
+
+    boxCBack() {
+        console.log('aaaaaaaaaaaaa');
     }
 }

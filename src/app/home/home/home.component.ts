@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { SettingComponent } from '../setting/setting.component';
 import { FightComponent } from '../fight/fight.component';
-import { homeRouterAnimate } from '../../component/animations/router.animate';
+import { pageRouterAnimate } from '../../component/animations/router.animate';
 import { PageRouterParam } from './home-common';
 import { IntroduceComponent } from '../introduce/introduce.component';
 import { petsITFS } from '../fight/fight-common';
@@ -13,7 +13,7 @@ import { petsITFS } from '../fight/fight-common';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css'],
     animations: [
-        homeRouterAnimate
+        pageRouterAnimate
     ]
 })
 export class HomeComponent implements OnInit {

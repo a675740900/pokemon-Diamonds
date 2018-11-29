@@ -4,12 +4,31 @@
             <span>Third Line</span>
             <span class="example-spacer"></span>
             <button mat-icon-button [matMenuTriggerFor]="menu">
-                    <mat-icon>more_vert</mat-icon>
-                </button>
+                <mat-icon>more_vert</mat-icon>
+            </button>
         </mat-toolbar-row>
     </mat-toolbar>
-</div>
 
+    <!-- <div style="display: flex; justify-content: flex-end;"> -->
+    <div style="position: absolute; bottom: 0px; right: 0;">
+        <div class='menuBar'>
+            <div [@box]='menubox' (@box.done)='boxCBack()'>
+                <mat-toolbar color="primary">
+                    <mat-toolbar-row>
+                        <button mat-fab (click)='menuClick()'>
+                            <mat-icon>bag</mat-icon>
+                        </button>
+                    </mat-toolbar-row>
+                </mat-toolbar>
+            </div>
+
+            <button mat-fab (click)='menuClick()'>
+                <mat-icon>apps</mat-icon>
+            </button>
+        </div>
+    </div>
+
+</div>
 
 <mat-menu #menu="matMenu">
     <button mat-menu-item>

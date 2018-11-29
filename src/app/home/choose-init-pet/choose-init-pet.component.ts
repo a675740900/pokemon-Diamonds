@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { pageRouterAnimate } from '../../component/animations/router.animate';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageRouterParam } from '../home/home-common';
-import { PetIntroduce } from '../../component/comp-common';
-import { Pet, getPet, getPetTypeName, getPetTypeNameEn } from '../../data-source/pet/pet.component';
+import { Pet, getPet } from '../../data-source/pet/pet.component';
 
 @Component({
     selector: 'app-choose-init-pet',
@@ -18,7 +17,7 @@ export class ChooseInitPetComponent implements OnInit {
     lastPageParam: PageRouterParam;
 
     // 定义开始的状态
-    private boxState: string;
+    boxState: string;
 
     choosePets: Pet[] = [
         getPet(1),
@@ -51,7 +50,7 @@ export class ChooseInitPetComponent implements OnInit {
         switch (this.boxState) {
             case 'goBack':
                 this.router.navigate(['/home/home'], {
-                    queryParams: {
+                    queryParams: { // 页面跳转参数
                         goBack: true
                     }
                 });

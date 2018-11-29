@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Page1Component } from './page1/page1.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { ChooseInitPetComponent } from './choose-init-pet/choose-init-pet.component';
 import { MaterialModule } from '../component/material-module';
@@ -11,6 +10,7 @@ import { GameHomeComponent } from './game-home/game-home.component';
 import { ExperienceComponent } from '../data-source/experience/experience.component';
 import { PetIntroduceComponent } from '../component/pet-introduce.component';
 import { FormsModule } from '@angular/forms';
+import { MapComponent } from './map/map.component';
 
 @NgModule({
     imports: [
@@ -23,11 +23,11 @@ import { FormsModule } from '@angular/forms';
         FormsModule
     ],
     declarations: [
-        Page1Component,
         ChooseInitPetComponent,
         ExperienceComponent,
         GameHomeComponent,
-        PetIntroduceComponent
+        PetIntroduceComponent,
+        MapComponent
     ],
     exports: [
         PetIntroduceComponent

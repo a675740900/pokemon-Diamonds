@@ -31,5 +31,6 @@ export interface PetIntroduce {
     subtitle?: string; // 字幕
     petType?: PetType; // 宠物类型
     petTypeImg?: string; // 宠物类型图片路径
+    content?: string; // 内容
     url?: string; // 宠物图片路径
 }
