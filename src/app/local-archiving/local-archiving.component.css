@@ -1,0 +1,8 @@
+.hover-container {
+    background-color: red;
+    width: 100px
+}
+
+tbody > tr {
+    background-color: red;
+}

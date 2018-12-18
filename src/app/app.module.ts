@@ -12,6 +12,8 @@ import { HomeModule } from './home/home.module';
 import { IntroduceComponent } from './home/introduce/introduce.component';
 import { MenuIntroduceComponent } from './component/menu-introduce.component';
 import { BrowserModule } from '@angular/platform-browser';
+import { MapComponent } from './data-source/map/map.component';
+import { LocalArchivingComponent } from './local-archiving/local-archiving.component';
 
 @NgModule({
     declarations: [
@@ -21,6 +23,8 @@ import { BrowserModule } from '@angular/platform-browser';
         HomeComponent,
         IntroduceComponent,
         MenuIntroduceComponent,
+        MapComponent,
+        LocalArchivingComponent
     ],
     imports: [
         AppRoutingModule,
@@ -39,6 +43,8 @@ import { BrowserModule } from '@angular/platform-browser';
         SettingComponent,
         FightComponent,
         IntroduceComponent,
+        MapComponent,
+        LocalArchivingComponent
     ]
 })
 export class AppModule { }

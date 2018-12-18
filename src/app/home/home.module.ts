@@ -10,7 +10,6 @@ import { GameHomeComponent } from './game-home/game-home.component';
 import { ExperienceComponent } from '../data-source/experience/experience.component';
 import { PetIntroduceComponent } from '../component/pet-introduce.component';
 import { FormsModule } from '@angular/forms';
-import { MapComponent } from './map/map.component';
 
 @NgModule({
     imports: [
@@ -27,7 +26,6 @@ import { MapComponent } from './map/map.component';
         ExperienceComponent,
         GameHomeComponent,
         PetIntroduceComponent,
-        MapComponent
     ],
     exports: [
         PetIntroduceComponent

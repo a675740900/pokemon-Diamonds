@@ -7,6 +7,8 @@ import { pageRouterAnimate } from '../../component/animations/router.animate';
 import { PageRouterParam } from './home-common';
 import { IntroduceComponent } from '../introduce/introduce.component';
 import { petsITFS } from '../fight/fight-common';
+import { getLocalStorage } from '../../local-archiving/local-storage';
+import { LocalArchivingComponent } from '../../local-archiving/local-archiving.component';
 
 @Component({
     selector: 'app-home',
@@ -34,14 +36,14 @@ export class HomeComponent implements OnInit {
         activatedRoute.queryParams.subscribe((queryParams: PageRouterParam) => {
             this.lastPageParam = queryParams;
             if (this.lastPageParam.goBack) {
-                this.boxState = 'fromBack';
+                this.boxState = 'goHome';
             }
         });
     }
 
     routerAnimateCBack() {
         switch (this.boxState) {
-            case 'goNext':
+            case 'fromHome':
                 this.router.navigate(['/home/choose-init-pet'], {
                     queryParams: {
                         goNext: true
@@ -78,7 +80,8 @@ export class HomeComponent implements OnInit {
         }
         const dialogRef = this.dialog.open(FightComponent, {
             width: '900px', height: '500px',
-            data: petInfo
+            data: petInfo,
+            autoFocus: false,
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -87,10 +90,22 @@ export class HomeComponent implements OnInit {
     }
 
     startGame() {
-        this.boxState = 'goNext';
+        this.boxState = 'fromHome';
     }
 
     ngOnInit() {
+    }
+
+    getLocal() {
+        const dialogRef = this.dialog.open(LocalArchivingComponent, {
+            width: '900px', height: '500px',
+            data: {},
+            autoFocus: false
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+        });
     }
 
     introduce() {

@@ -44,6 +44,16 @@ export const toPercentage = (num: number): string => {
     return `${rmFloatPoint(num * 100)}%`
 }
 
+// json转字符串
+export const JSONStringify = (data: any): string => {
+    return isEmpty(data) ? '' : JSON.stringify(data);
+}
+
+// 字符串转json
+export const JSONParse = (data: string): any => {
+    return isEmpty(data) ? null : JSON.parse(data);
+}
+
 class NameToIconUrl {
     name: string;
     url: string;
