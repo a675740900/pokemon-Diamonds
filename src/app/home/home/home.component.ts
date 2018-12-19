@@ -98,7 +98,7 @@ export class HomeComponent implements OnInit {
 
     getLocal() {
         const dialogRef = this.dialog.open(LocalArchivingComponent, {
-            width: '900px', height: '500px',
+            width: '900px',
             data: {},
             autoFocus: false
         });

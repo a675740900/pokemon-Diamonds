@@ -5,7 +5,7 @@ import { LocalStorageITFS, getLocalStorage } from './local-storage';
 @Component({
     selector: 'app-local-archiving',
     templateUrl: './local-archiving.component.html',
-    styles: ['./local-archiving.component.css']
+    styleUrls: ['./local-archiving.component.css']
 })
 
 /**

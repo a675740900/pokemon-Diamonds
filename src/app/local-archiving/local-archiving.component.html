@@ -1,16 +1,18 @@
-<table style="width: 100%;" mat-table [dataSource]="localArchivings" class="mat-elevation-z8">
-    <ng-container *ngFor='let showContainer of showContainers' [matColumnDef]="showContainer.bind">
-        <th mat-header-cell *matHeaderCellDef>{{showContainer.name}}</th>
-        <td mat-cell *matCellDef="let element"> {{element[showContainer.bind]}} </td>
-    </ng-container>
+<div>
+    <table style="width: 100%;" mat-table [dataSource]="localArchivings" class="mat-elevation-z8">
+        <ng-container *ngFor='let showContainer of showContainers' [matColumnDef]="showContainer.bind">
+            <th mat-header-cell *matHeaderCellDef>{{showContainer.name}}</th>
+            <td mat-cell *matCellDef="let element"> {{element[showContainer.bind]}} </td>
+        </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="showCols"></tr>
-    <tr mat-row *matRowDef="let row; columns: showCols;"></tr>
-</table>
+        <tr mat-header-row *matHeaderRowDef="showCols"></tr>
+        <tr mat-row class='hover-container' tabindex="0" *matRowDef="let row; columns: showCols;"></tr>
+    </table>
 
-<div class='center' style="width: 266px;">
-    <button mat-raised-button>新游戏</button>
-    <button mat-raised-button>确认</button>
-    <button mat-raised-button>取消</button>
-    <button mat-raised-button>删除</button>
+    <div class='center button'>
+        <button mat-raised-button>新游戏</button>
+        <button mat-raised-button>确认</button>
+        <button mat-raised-button>取消</button>
+        <button mat-raised-button>删除</button>
+    </div>
 </div>
