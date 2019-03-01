@@ -10,22 +10,9 @@
     </mat-toolbar>
 
     <!-- <div style="display: flex; justify-content: flex-end;"> -->
-    <div style="position: absolute; bottom: 0px; right: 0;">
-        <div class='menuBar'>
-            <div [@box]='menubox' (@box.done)='boxCBack()'>
-                <mat-toolbar color="primary">
-                    <mat-toolbar-row>
-                        <button mat-fab (click)='bagClick()'>
-                            <mat-icon>bag</mat-icon>
-                        </button>
-                    </mat-toolbar-row>
-                </mat-toolbar>
-            </div>
-
-            <button mat-fab (click)='menuClick()'>
-                <mat-icon>apps</mat-icon>
-            </button>
-        </div>
+    <div class='menuBar'>
+        <button mat-raised-button (click)='openBag()'>背包</button>
+        <button mat-raised-button (click)='openMap()'>地图</button>
     </div>
 
 </div>

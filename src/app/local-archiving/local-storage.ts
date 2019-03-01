@@ -1,4 +1,4 @@
-import { JSONStringify, JSONParse } from "../home/common-tool";
+import { JSONStringify, JSONParse } from "../game/common-tool";
 
 // 本地缓存名称
 const localStorageKey: string = 'pokemonData';

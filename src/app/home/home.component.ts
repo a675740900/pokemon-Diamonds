@@ -1,14 +1,14 @@
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { SettingComponent } from '../setting/setting.component';
-import { FightComponent } from '../fight/fight.component';
-import { pageRouterAnimate } from '../../component/animations/router.animate';
+import { SettingComponent } from '../game/setting/setting.component';
+import { FightComponent } from '../game/fight/fight.component';
+import { pageRouterAnimate } from '../game/../component/animations/router.animate';
 import { PageRouterParam } from './home-common';
-import { IntroduceComponent } from '../introduce/introduce.component';
-import { petsITFS } from '../fight/fight-common';
-import { getLocalStorage } from '../../local-archiving/local-storage';
-import { LocalArchivingComponent } from '../../local-archiving/local-archiving.component';
+import { IntroduceComponent } from '../game/introduce/introduce.component';
+import { petsITFS } from '../game/fight/fight-common';
+import { getLocalStorage } from '../local-archiving/local-storage';
+import { LocalArchivingComponent } from '../game/../local-archiving/local-archiving.component';
 
 @Component({
     selector: 'app-home',
@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
     routerAnimateCBack() {
         switch (this.boxState) {
             case 'fromHome':
-                this.router.navigate(['/home/choose-init-pet'], {
+                this.router.navigate(['/game/choose-init-pet'], {
                     queryParams: {
                         goNext: true
                     }

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgModule } from '@angular/core';
 import { pageRouterAnimate } from '../../component/animations/router.animate';
-import { ActivatedRoute, Router } from '@angular/router';
-import { PageRouterParam } from '../home/home-common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { PageRouterParam } from '../../home/home-common';
 import { Pet, getPet } from '../../data-source/pet/pet.component';
 
 @Component({
@@ -11,6 +11,16 @@ import { Pet, getPet } from '../../data-source/pet/pet.component';
     animations: [
         pageRouterAnimate,
     ]
+})
+
+@NgModule({
+    imports: [
+        RouterModule.forChild([{
+            path: '',
+            component: ChooseInitPetComponent
+        }])
+    ],
+    declarations: [ChooseInitPetComponent]
 })
 export class ChooseInitPetComponent implements OnInit {
     title: string = '选择初始宠物';
@@ -49,14 +59,14 @@ export class ChooseInitPetComponent implements OnInit {
     routerAnimateCBack() {
         switch (this.boxState) {
             case 'goBack':
-                this.router.navigate(['/home/home'], {
+                this.router.navigate(['/home'], {
                     queryParams: { // 页面跳转参数
                         goBack: true
                     }
                 });
                 break;
             case 'goNext':
-                this.router.navigate(['/home/game-home'], {
+                this.router.navigate(['/game/game-home'], {
                     queryParams: {
                         goNext: true
                     }

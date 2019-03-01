@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgModule } from '@angular/core';
 import { MatSnackBar, MatDialog } from '@angular/material';
-import { PageRouterParam } from '../home/home-common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { PageRouterParam } from '../../home/home-common';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { pageRouterAnimate } from '../../component/animations/router.animate';
 import { PlayerInfoITFS, MenuInfo } from './game-home-common';
 import { boxAnimate } from '../../component/animations/base-click';
@@ -16,6 +16,15 @@ import { setLocalStorage } from '../../local-archiving/local-storage';
         pageRouterAnimate,
         boxAnimate
     ]
+})
+@NgModule({
+    imports: [
+        RouterModule.forChild([{
+            path: '',
+            component: GameHomeComponent
+        }])
+    ],
+    declarations: [GameHomeComponent]
 })
 // 游戏界面
 export class GameHomeComponent implements OnInit {
@@ -68,7 +77,7 @@ export class GameHomeComponent implements OnInit {
         this.menubox = this.menuParam.show ? 'show' : 'hidden';
     }
 
-    bagClick() {
+    openMap() {
         this.setMenuShow();
         const dialogRef = this.dialog.open(MapComponent, {
             width: '1000px',
@@ -86,7 +95,7 @@ export class GameHomeComponent implements OnInit {
         let url: string = '';
         switch (this.boxState) {
             case 'goBack':
-                url = '/home/home';
+                url = '/home';
                 this.router.navigate([url], {
                     queryParams: {
                         goBack: true

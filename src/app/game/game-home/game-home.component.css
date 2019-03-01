@@ -20,6 +20,12 @@
 }
 
 .menuBar {
-    display: flex;
-    justify-content: flex-end;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    padding: 10px;
+}
+
+.menuBar > button {
+    margin-right: 5px;
 }

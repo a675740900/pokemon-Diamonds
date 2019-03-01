@@ -1,4 +1,4 @@
-import { getIcon, getNameZh, getPetTypeIcon } from "../home/common-tool";
+import { getIcon, getNameZh, getPetTypeIcon } from "../game/common-tool";
 import { getPetTypeName, PetType, getPetTypeNameEn } from "../data-source/pet/pet.component";
 
 // 介绍数组类型

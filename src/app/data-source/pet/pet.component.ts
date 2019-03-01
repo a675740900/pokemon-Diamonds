@@ -1,7 +1,7 @@
 import { SkillAttr, ReduceInjury, BloodSucking, Bleeding, ReducePower, Dodge, IncreasePower, ShieldFromAttack, ViolentAttack, IncreaseBlood, SkillTip, AttackAbnormal, Silent, ImmuneSkill, Stiff_Stone, Stiff_Twining, InfiniteRound } from "../skill/skill.component";
 import { matchITFS, getPetMatchList } from "./pet-info";
-import { copy, rmFloatPoint, toPercentage } from "../../home/common-tool";
-import { PetBuffIcon, PetDataITFS } from "../../home/fight/fight-common";
+import { copy, rmFloatPoint, toPercentage } from "../../game/common-tool";
+import { PetBuffIcon, PetDataITFS } from "../../game/fight/fight-common";
 
 export const petList_plant: number[] = [1];
 export const petList_beast: number[] = [2];

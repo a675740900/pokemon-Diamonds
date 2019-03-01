@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { PetIntroduce } from './comp-common';
-import { getPetTypeIcon } from '../home/common-tool';
+import { getPetTypeIcon } from '../game/common-tool';
 import { Pet, getPetTypeNameEn, getPetTypeName } from '../data-source/pet/pet.component';
 
 @Component({

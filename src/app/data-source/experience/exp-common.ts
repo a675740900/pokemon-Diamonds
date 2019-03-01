@@ -1,6 +1,6 @@
 
 import { Pet } from "src/app/data-source/pet/pet.component";
-import { rmFloatPoint } from "../../home/common-tool";
+import { rmFloatPoint } from "../../game/common-tool";
 
 // 经验系统公共区
 
